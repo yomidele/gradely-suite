@@ -1,15 +1,23 @@
+import { DEFAULT_GRADING_SCALE, type GradeBand } from "./college-settings";
+
 export interface GradeInfo {
   grade: string;
   point: number;
+  remark?: string;
 }
 
-export function computeGrade(total: number): GradeInfo {
-  if (total >= 70) return { grade: "A", point: 5 };
-  if (total >= 60) return { grade: "B", point: 4 };
-  if (total >= 50) return { grade: "C", point: 3 };
-  if (total >= 45) return { grade: "D", point: 2 };
-  if (total >= 40) return { grade: "E", point: 1 };
-  return { grade: "F", point: 0 };
+/**
+ * Resolve a score against a configurable grading scale.
+ * Falls back to the institution default scale (70/60/50/45/40) when none is configured.
+ */
+export function gradeForScore(total: number, scale: GradeBand[] = DEFAULT_GRADING_SCALE): GradeInfo {
+  const bands = [...(scale.length ? scale : DEFAULT_GRADING_SCALE)].sort((a, b) => b.min - a.min);
+  const band = bands.find((b) => total >= b.min) ?? bands[bands.length - 1];
+  return { grade: band.grade, point: band.point, remark: band.remark };
+}
+
+export function computeGrade(total: number, scale?: GradeBand[]): GradeInfo {
+  return gradeForScore(total, scale);
 }
 
 export interface ResultRow {
@@ -27,24 +35,26 @@ export function effectiveTotal(r: { ca_score?: number | string | null; exam_scor
   return Number(r.ca_score ?? 0) + Number(r.exam_score ?? 0);
 }
 
-export function computeGPA(rows: ResultRow[]): number {
+export function computeGPA(rows: ResultRow[], scale?: GradeBand[]): number {
   if (rows.length === 0) return 0;
   let totalPoints = 0;
   let totalUnits = 0;
   for (const r of rows) {
     const total = Number(r.ca) + Number(r.exam);
-    const { point } = computeGrade(total);
+    const { point } = computeGrade(total, scale);
     totalPoints += point * r.unit;
     totalUnits += r.unit;
   }
   return totalUnits === 0 ? 0 : totalPoints / totalUnits;
 }
 
-export function classOfDegree(cgpa: number): string {
-  if (cgpa >= 4.5) return "First Class";
-  if (cgpa >= 3.5) return "Second Class Upper";
-  if (cgpa >= 2.4) return "Second Class Lower";
-  if (cgpa >= 1.5) return "Third Class";
-  if (cgpa >= 1.0) return "Pass";
-  return "Fail";
+/** Level number (100, 200, ...) shown as a College of Health year label. */
+export function yearLabel(level: number): string {
+  const year = Math.max(1, Math.round(level / 100));
+  return `Year ${year}`;
+}
+
+/** Levels available for a programme of a given duration. */
+export function levelsForDuration(durationYears: number): number[] {
+  return Array.from({ length: Math.max(1, durationYears) }, (_, i) => (i + 1) * 100);
 }
