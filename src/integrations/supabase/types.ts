@@ -64,6 +64,48 @@ export type Database = {
           },
         ]
       }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          actor_role: string | null
+          created_at: string
+          department_id: string | null
+          details: Json
+          entity_id: string | null
+          entity_type: string
+          faculty_id: string | null
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          department_id?: string | null
+          details?: Json
+          entity_id?: string | null
+          entity_type: string
+          faculty_id?: string | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          department_id?: string | null
+          details?: Json
+          entity_id?: string | null
+          entity_type?: string
+          faculty_id?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       carryovers: {
         Row: {
           cleared_session_id: string | null
@@ -141,6 +183,84 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      college_settings: {
+        Row: {
+          address: string | null
+          city: string | null
+          college_name: string
+          email: string | null
+          grading_scale: Json
+          id: string
+          logo_url: string | null
+          matric_format: string
+          matric_seq_padding: number
+          motto: string | null
+          pass_mark: number
+          payment_settings: Json
+          phone: string | null
+          pin_settings: Json
+          report_card_settings: Json
+          result_settings: Json
+          short_name: string
+          socials: Json
+          state: string | null
+          transcript_settings: Json
+          updated_at: string
+          use_gpa: boolean
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          college_name?: string
+          email?: string | null
+          grading_scale?: Json
+          id?: string
+          logo_url?: string | null
+          matric_format?: string
+          matric_seq_padding?: number
+          motto?: string | null
+          pass_mark?: number
+          payment_settings?: Json
+          phone?: string | null
+          pin_settings?: Json
+          report_card_settings?: Json
+          result_settings?: Json
+          short_name?: string
+          socials?: Json
+          state?: string | null
+          transcript_settings?: Json
+          updated_at?: string
+          use_gpa?: boolean
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          college_name?: string
+          email?: string | null
+          grading_scale?: Json
+          id?: string
+          logo_url?: string | null
+          matric_format?: string
+          matric_seq_padding?: number
+          motto?: string | null
+          pass_mark?: number
+          payment_settings?: Json
+          phone?: string | null
+          pin_settings?: Json
+          report_card_settings?: Json
+          result_settings?: Json
+          short_name?: string
+          socials?: Json
+          state?: string | null
+          transcript_settings?: Json
+          updated_at?: string
+          use_gpa?: boolean
+          website?: string | null
+        }
+        Relationships: []
       }
       course_assignments: {
         Row: {
@@ -241,6 +361,7 @@ export type Database = {
           faculty_id: string
           id: string
           level: number
+          programme_id: string | null
           semester: string
           session_id: string
           status: string
@@ -254,6 +375,7 @@ export type Database = {
           faculty_id: string
           id?: string
           level: number
+          programme_id?: string | null
           semester: string
           session_id: string
           status?: string
@@ -267,6 +389,7 @@ export type Database = {
           faculty_id?: string
           id?: string
           level?: number
+          programme_id?: string | null
           semester?: string
           session_id?: string
           status?: string
@@ -281,6 +404,13 @@ export type Database = {
             columns: ["faculty_id"]
             isOneToOne: false
             referencedRelation: "faculties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_registrations_programme_id_fkey"
+            columns: ["programme_id"]
+            isOneToOne: false
+            referencedRelation: "programmes"
             referencedColumns: ["id"]
           },
           {
@@ -308,6 +438,7 @@ export type Database = {
           faculty_id: string
           id: string
           level: number
+          programme_id: string | null
           semester: string
           title: string
           unit: number
@@ -320,6 +451,7 @@ export type Database = {
           faculty_id?: string
           id?: string
           level: number
+          programme_id?: string | null
           semester: string
           title: string
           unit: number
@@ -332,6 +464,7 @@ export type Database = {
           faculty_id?: string
           id?: string
           level?: number
+          programme_id?: string | null
           semester?: string
           title?: string
           unit?: number
@@ -349,6 +482,13 @@ export type Database = {
             columns: ["faculty_id"]
             isOneToOne: false
             referencedRelation: "faculties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "courses_programme_id_fkey"
+            columns: ["programme_id"]
+            isOneToOne: false
+            referencedRelation: "programmes"
             referencedColumns: ["id"]
           },
         ]
@@ -543,6 +683,75 @@ export type Database = {
         }
         Relationships: []
       }
+      programmes: {
+        Row: {
+          award: string
+          code: string
+          created_at: string
+          department_id: string
+          description: string | null
+          duration_years: number
+          faculty_id: string
+          id: string
+          is_active: boolean
+          max_units: number
+          min_units: number
+          name: string
+          requirements: string | null
+          updated_at: string
+          uses_gpa: boolean
+        }
+        Insert: {
+          award?: string
+          code: string
+          created_at?: string
+          department_id: string
+          description?: string | null
+          duration_years?: number
+          faculty_id: string
+          id?: string
+          is_active?: boolean
+          max_units?: number
+          min_units?: number
+          name: string
+          requirements?: string | null
+          updated_at?: string
+          uses_gpa?: boolean
+        }
+        Update: {
+          award?: string
+          code?: string
+          created_at?: string
+          department_id?: string
+          description?: string | null
+          duration_years?: number
+          faculty_id?: string
+          id?: string
+          is_active?: boolean
+          max_units?: number
+          min_units?: number
+          name?: string
+          requirements?: string | null
+          updated_at?: string
+          uses_gpa?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "programmes_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "programmes_faculty_id_fkey"
+            columns: ["faculty_id"]
+            isOneToOne: false
+            referencedRelation: "faculties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       registration_links: {
         Row: {
           created_at: string
@@ -603,6 +812,7 @@ export type Database = {
           faculty_id: string
           id: string
           level: number
+          programme_id: string | null
           published_at: string | null
           returned_reason: string | null
           semester: string
@@ -624,6 +834,7 @@ export type Database = {
           faculty_id?: string
           id?: string
           level: number
+          programme_id?: string | null
           published_at?: string | null
           returned_reason?: string | null
           semester: string
@@ -645,6 +856,7 @@ export type Database = {
           faculty_id?: string
           id?: string
           level?: number
+          programme_id?: string | null
           published_at?: string | null
           returned_reason?: string | null
           semester?: string
@@ -675,6 +887,13 @@ export type Database = {
             columns: ["faculty_id"]
             isOneToOne: false
             referencedRelation: "faculties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "results_programme_id_fkey"
+            columns: ["programme_id"]
+            isOneToOne: false
+            referencedRelation: "programmes"
             referencedColumns: ["id"]
           },
           {
@@ -759,6 +978,7 @@ export type Database = {
           matric_number: string
           passport_url: string | null
           phone: string | null
+          programme_id: string | null
           state_of_origin: string | null
           user_id: string | null
         }
@@ -779,6 +999,7 @@ export type Database = {
           matric_number: string
           passport_url?: string | null
           phone?: string | null
+          programme_id?: string | null
           state_of_origin?: string | null
           user_id?: string | null
         }
@@ -799,6 +1020,7 @@ export type Database = {
           matric_number?: string
           passport_url?: string | null
           phone?: string | null
+          programme_id?: string | null
           state_of_origin?: string | null
           user_id?: string | null
         }
@@ -815,6 +1037,13 @@ export type Database = {
             columns: ["faculty_id"]
             isOneToOne: false
             referencedRelation: "faculties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "students_programme_id_fkey"
+            columns: ["programme_id"]
+            isOneToOne: false
+            referencedRelation: "programmes"
             referencedColumns: ["id"]
           },
         ]
