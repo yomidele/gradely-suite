@@ -58,3 +58,16 @@ export function yearLabel(level: number): string {
 export function levelsForDuration(durationYears: number): number[] {
   return Array.from({ length: Math.max(1, durationYears) }, (_, i) => (i + 1) * 100);
 }
+
+/**
+ * Academic standing for a CGPA on a 5-point scale.
+ * College of Health awards use Distinction / Credit / Pass classes.
+ */
+export function classOfDegree(cgpa: number): string {
+  if (cgpa >= 4.5) return "Distinction";
+  if (cgpa >= 3.5) return "Upper Credit";
+  if (cgpa >= 2.4) return "Lower Credit";
+  if (cgpa >= 1.5) return "Pass";
+  if (cgpa > 0) return "Fail";
+  return "—";
+}
