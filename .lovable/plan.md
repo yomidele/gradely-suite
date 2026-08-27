@@ -1,68 +1,55 @@
-# University Management Platform Upgrade — Phased Plan
+# University Portal → Nigerian College of Health Portal (Refactor, not rebuild)
 
-This is a very large scope (3 portals, role isolation, multi-faculty data model, student registration, passport uploads, course registration with live unit counter, carryover automation, analytics, etc.). It cannot be safely shipped in a single turn without breaking the working result engine. I'll deliver it in approved phases, each phase independently usable and reviewable.
+## What already exists and will be reused as-is
 
-## Guiding rules
-- **Preserve** the existing engine: `grading.ts`, GPA/CGPA logic, `promote_students_to_session`, `student_academic_records`, spreadsheet/transcript export. No rewrites — only additive changes.
-- **Backend-enforced isolation** via `faculty_id` on every domain table + RLS policies using a `has_role` / `user_faculty()` security-definer function. Frontend hiding is treated as UX only.
-- **Roles table** (`user_roles` with enum `app_role`: `super_admin`, `faculty_admin`, `student`) — never on profiles. Plus `faculty_admins.faculty_id` mapping and `students.user_id` linking.
-- **One Supabase Auth** instance, three login *pages* (`/admin/login`, `/faculty/login`, `/student/login`) that all sign in via Supabase but redirect by role. This is simpler and safer than three parallel auth systems and meets the "separate portals" requirement at the UX layer.
-- Routes grouped under `_admin`, `_faculty`, `_student` pathless layouts, each with `beforeLoad` role gate.
+Your app is already a multi-portal academic system. Almost every core piece maps directly onto a College of Health.
 
-## Phase 1 — Foundation (this approval)
-Database + auth + role routing skeleton. No UI for new portals yet beyond shells.
+Working today (keep):
+- Auth + roles: `user_roles` table with `app_role` enum (super_admin, faculty_admin, department_admin, lecturer, student), `has_role()` and `current_faculty_id()` security-definer functions, per-portal login pages and route guards (`ProtectedAdmin`, `ProtectedFaculty`, `ProtectedDeptAdmin`, `ProtectedLecturer`, `ProtectedStudent`).
+- Structure: `faculties` → `departments` → `courses` → `students`, plus `academic_sessions`, `academic_settings`, `student_academic_records` with automatic level promotion.
+- Student portal: dashboard, profile, course registration (`course_registrations`, `course_registration_items` with min/max unit rules), results, carryovers.
+- Lecturer portal: course assignments, result entry grid, draft/submit flow.
+- Result workflow: `results` with status (draft → submitted → approved → published), returned-reason, dept/faculty approval screens, audit logging, carryover trigger.
+- Transcripts + PDF generation (jsPDF), spreadsheet generator, validation audit, registration links, self-registration with configurable matric sequence (`next_matric_seq`).
 
-1. **Migration**:
-   - `faculties` (name, code), `departments` (faculty_id, name, code).
-   - `app_role` enum + `user_roles` table + `has_role(uuid, app_role)` security definer.
-   - `faculty_admins` (user_id, faculty_id, full_name, email, phone).
-   - Add `faculty_id`, `department_id`, `user_id`, `passport_url`, `gender`, `dob`, `address`, `state_of_origin`, `guardian_*` to `students` (nullable for backfill).
-   - Add `faculty_id`, `department_id` to `courses` and `results`.
-   - New tables: `carryovers`, `course_registrations`, `course_registration_items`, `academic_settings` (max/min units).
-   - Tighten RLS: replace blanket `auth full access` with role+faculty scoped policies on every table.
-   - Storage bucket `passports` (public read, owner write) + policies.
-   - Seed one "Default Faculty" + assign all existing students/courses to it so current data keeps working.
-2. **Auth wiring**:
-   - Promote current demo admin to `super_admin` row in `user_roles`.
-   - `useAuthSession` returns role; add `useRole()` hook.
-3. **Routing skeleton**:
-   - `_admin.tsx`, `_faculty.tsx`, `_student.tsx` layout routes with role gates + redirect.
-   - `/admin/login`, `/faculty/login`, `/student/login` pages (students sign in with matric number → resolved to email server-side).
-   - Move existing admin pages under `_admin/` (sessions, courses, students, results, transcripts, etc.) — paths preserved via redirects.
+Terminology only (no logic change): "University" → "College", "Faculty Admin" → "School/Faculty Admin". `faculties` table stays and is presented as Schools/Faculties.
 
-## Phase 2 — Super Admin
-- `/admin/faculties` CRUD.
-- `/admin/faculty-admins` create (server fn that creates auth user + role + faculty_admins row via service role).
-- `/admin/students` university-wide view.
-- `/admin/analytics` cross-faculty stats.
+## What is missing and must be added
 
-## Phase 3 — Faculty Admin
-- `/faculty/dashboard` faculty-scoped stats.
-- `/faculty/students`, `/faculty/courses`, `/faculty/results` (reuses existing result-entry / results pages, filtered by faculty).
-- `/faculty/registrations` review.
+New tables (additive; nothing dropped):
+- `programmes` (school/department, name, code, duration_years, uses_gpa, active) + `programme_id` and `duration`-aware level handling on `students`, `courses`, `course_registrations`.
+- `college_settings` (name, logo, address, phone, email, socials, matric format, grading scale JSON, result/report/transcript/PIN settings).
+- Admissions: `applicants`, `applications` (+ documents, status Draft→Submitted→Under Review→Accepted→Rejected→Admitted), admit-to-student conversion.
+- Fees: `fee_categories`, `fee_assignments`, `invoices`, `payments`, `receipts`. (No Paystack integration exists yet — architecture prepared, provider wired only if you want it.)
+- `result_pins` (student, session, semester, uses, expiry, active/used) + backend-only validation for public result checking.
+- `announcements` (scope: college/school/department/programme/level).
+- `clinical_postings` and `industrial_attachments` (minimal, expandable).
+- `audit_logs` as a real table (currently logging is app-side only).
 
-## Phase 4 — Student Registration & Portal
-- Public `/student/register?token=...` (registration links with expiry).
-- Passport upload + crop.
-- Auto matric generation (`{DEPTCODE}/{YY}/{SEQ}`).
-- `/student/dashboard`, `/student/profile`, `/student/results`, `/student/gpa`, `/student/carryovers`, `/student/courses`, `/student/settings`.
-- Result slip PDF (reuses transcript generator).
+Changes to existing behaviour:
+- Grading moves from hard-coded `computeGrade()` in `src/lib/grading.ts` to a configurable scale stored in `college_settings`, with the current 70/60/50/45/40 scale seeded as the default so nothing changes visually.
+- Level/year stops assuming 100–400. Programme duration drives levels (Year 1..N), including 2- and 3-year programmes. `promote_students_to_session()` is rewritten to promote by programme duration and graduate at the final year.
+- Public site: current landing page is a stub; becomes a full College of Health website (Home, About, Schools, Departments, Programmes, Admissions, News, Events, Contact + Apply Now / Student Portal / Staff Portal).
 
-## Phase 5 — Course Registration + Carryover Automation
-- Auto-detect failed courses from `results` → write `carryovers` rows scoped to same semester parity.
-- Registration UI: locked carryovers + live unit counter + min/max enforcement.
-- Server fn validates totals before insert.
+## Data preservation
 
-## Phase 6 — Polish
-- Analytics charts (recharts), responsive sidebar, animations, security audit pass.
+Existing faculties, departments, courses, students, results, registrations and sessions are kept. Migration backfills a default programme per department so current students/courses attach cleanly, and maps existing levels 100/200/300/400 to Year 1–4.
 
-## Technical notes
-- All cross-tenant queries go through `createServerFn` + `requireSupabaseAuth`; RLS is the backstop.
-- Faculty Admin server fns read `faculty_id` from `faculty_admins` via `userId`, never trust client input.
-- Existing `result-entry.tsx`, `results.tsx`, `transcripts.tsx`, `spreadsheet-generator.ts` stay as-is; new portal pages thin-wrap them with faculty filters.
-- Storage: `passports/{user_id}.jpg`, public bucket, RLS by `auth.uid()::text = (storage.foldername(name))[1]`.
+## Phased delivery
 
-## What I'll ship on approval of this plan
-**Phase 1 only**: the migration + auth/role/routing skeleton. Existing admin functionality keeps working at the same URLs. After you confirm Phase 1 boots cleanly (login still works, existing pages still render, no data loss), I'll proceed to Phase 2.
+1. **Phase 1 (next step)** — Schema migration: programmes, college_settings, audit_logs, programme-aware levels + duration, configurable grading; backfill existing data; RLS + GRANTs for every new table. Then terminology sweep (College / School-Faculty) and an admin Settings + Programmes management screen.
+2. Public College of Health website (design pass: Nigerian institutional look, deep green/gold branding kept, serif headings, no SaaS-dashboard feel).
+3. Admissions & applicant portal.
+4. Student portal expansion (fees, receipts, timetable, calendar, announcements, documents, change password).
+5. Course registration by programme/level/semester.
+6. Lecturer portal + configurable grading in result entry.
+7–9. Departmental Admin, School/Faculty Admin, Super Admin dashboards & stats.
+10. Result approval/publication hardening + audit log UI.
+11. Result PINs + public Check Result page (backend-validated).
+12. Report card + transcript PDFs (A4, logo, photo, GPA/CGPA when programme uses it, QR-ready verification number).
+13. Fees & payments.
+14. Clinical/practical training + industrial attachment architecture.
 
-Reply **approve** to start Phase 1, or tell me which phases to reorder/cut.
+## Security
+
+Every new table gets RLS scoped by role: students see only their own rows; lecturers only assigned courses; department admins only their department; school admins only their school; super admin everything. PIN validation and payment verification run server-side only. Sensitive actions write to `audit_logs`.
