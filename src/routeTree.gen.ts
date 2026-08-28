@@ -16,6 +16,7 @@ import { Route as SessionsRouteImport } from './routes/sessions'
 import { Route as SchoolsRouteImport } from './routes/schools'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as ResultEntryRouteImport } from './routes/result-entry'
+import { Route as ProgrammesRouteImport } from './routes/programmes'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -86,6 +87,11 @@ const ResultsRoute = ResultsRouteImport.update({
 const ResultEntryRoute = ResultEntryRouteImport.update({
   id: '/result-entry',
   path: '/result-entry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgrammesRoute = ProgrammesRouteImport.update({
+  id: '/programmes',
+  path: '/programmes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -278,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
+  '/programmes': typeof ProgrammesRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
   '/schools': typeof SchoolsRoute
@@ -323,6 +330,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
+  '/programmes': typeof ProgrammesRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
   '/schools': typeof SchoolsRoute
@@ -369,6 +377,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
+  '/programmes': typeof ProgrammesRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
   '/schools': typeof SchoolsRoute
@@ -416,6 +425,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/departments'
     | '/login'
+    | '/programmes'
     | '/result-entry'
     | '/results'
     | '/schools'
@@ -461,6 +471,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/departments'
     | '/login'
+    | '/programmes'
     | '/result-entry'
     | '/results'
     | '/schools'
@@ -506,6 +517,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/departments'
     | '/login'
+    | '/programmes'
     | '/result-entry'
     | '/results'
     | '/schools'
@@ -552,6 +564,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DepartmentsRoute: typeof DepartmentsRoute
   LoginRoute: typeof LoginRoute
+  ProgrammesRoute: typeof ProgrammesRoute
   ResultEntryRoute: typeof ResultEntryRoute
   ResultsRoute: typeof ResultsRoute
   SchoolsRoute: typeof SchoolsRoute
@@ -639,6 +652,13 @@ declare module '@tanstack/react-router' {
       path: '/result-entry'
       fullPath: '/result-entry'
       preLoaderRoute: typeof ResultEntryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/programmes': {
+      id: '/programmes'
+      path: '/programmes'
+      fullPath: '/programmes'
+      preLoaderRoute: typeof ProgrammesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -904,6 +924,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DepartmentsRoute: DepartmentsRoute,
   LoginRoute: LoginRoute,
+  ProgrammesRoute: ProgrammesRoute,
   ResultEntryRoute: ResultEntryRoute,
   ResultsRoute: ResultsRoute,
   SchoolsRoute: SchoolsRoute,
