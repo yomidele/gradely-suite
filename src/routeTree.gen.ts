@@ -17,6 +17,7 @@ import { Route as SchoolsRouteImport } from './routes/schools'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as ResultEntryRouteImport } from './routes/result-entry'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as AuditLogsRouteImport } from './routes/audit-logs'
@@ -90,6 +91,11 @@ const ResultEntryRoute = ResultEntryRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DepartmentsRoute = DepartmentsRouteImport.update({
+  id: '/departments',
+  path: '/departments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -270,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/audit-logs': typeof AuditLogsRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/audit-logs': typeof AuditLogsRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
@@ -359,6 +367,7 @@ export interface FileRoutesById {
   '/audit-logs': typeof AuditLogsRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
@@ -405,6 +414,7 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/courses'
     | '/dashboard'
+    | '/departments'
     | '/login'
     | '/result-entry'
     | '/results'
@@ -449,6 +459,7 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/courses'
     | '/dashboard'
+    | '/departments'
     | '/login'
     | '/result-entry'
     | '/results'
@@ -493,6 +504,7 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/courses'
     | '/dashboard'
+    | '/departments'
     | '/login'
     | '/result-entry'
     | '/results'
@@ -538,6 +550,7 @@ export interface RootRouteChildren {
   AuditLogsRoute: typeof AuditLogsRoute
   CoursesRoute: typeof CoursesRoute
   DashboardRoute: typeof DashboardRoute
+  DepartmentsRoute: typeof DepartmentsRoute
   LoginRoute: typeof LoginRoute
   ResultEntryRoute: typeof ResultEntryRoute
   ResultsRoute: typeof ResultsRoute
@@ -633,6 +646,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/departments': {
+      id: '/departments'
+      path: '/departments'
+      fullPath: '/departments'
+      preLoaderRoute: typeof DepartmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -882,6 +902,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuditLogsRoute: AuditLogsRoute,
   CoursesRoute: CoursesRoute,
   DashboardRoute: DashboardRoute,
+  DepartmentsRoute: DepartmentsRoute,
   LoginRoute: LoginRoute,
   ResultEntryRoute: ResultEntryRoute,
   ResultsRoute: ResultsRoute,
