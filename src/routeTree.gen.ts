@@ -13,6 +13,7 @@ import { Route as ValidationAuditRouteImport } from './routes/validation-audit'
 import { Route as TranscriptsRouteImport } from './routes/transcripts'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as SessionsRouteImport } from './routes/sessions'
+import { Route as SchoolsRouteImport } from './routes/schools'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as ResultEntryRouteImport } from './routes/result-entry'
 import { Route as LoginRouteImport } from './routes/login'
@@ -69,6 +70,11 @@ const StudentsRoute = StudentsRouteImport.update({
 const SessionsRoute = SessionsRouteImport.update({
   id: '/sessions',
   path: '/sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchoolsRoute = SchoolsRouteImport.update({
+  id: '/schools',
+  path: '/schools',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResultsRoute = ResultsRouteImport.update({
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
+  '/schools': typeof SchoolsRoute
   '/sessions': typeof SessionsRoute
   '/students': typeof StudentsRoute
   '/transcripts': typeof TranscriptsRoute
@@ -310,6 +317,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
+  '/schools': typeof SchoolsRoute
   '/sessions': typeof SessionsRoute
   '/students': typeof StudentsRoute
   '/transcripts': typeof TranscriptsRoute
@@ -354,6 +362,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
+  '/schools': typeof SchoolsRoute
   '/sessions': typeof SessionsRoute
   '/students': typeof StudentsRoute
   '/transcripts': typeof TranscriptsRoute
@@ -399,6 +408,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/result-entry'
     | '/results'
+    | '/schools'
     | '/sessions'
     | '/students'
     | '/transcripts'
@@ -442,6 +452,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/result-entry'
     | '/results'
+    | '/schools'
     | '/sessions'
     | '/students'
     | '/transcripts'
@@ -485,6 +496,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/result-entry'
     | '/results'
+    | '/schools'
     | '/sessions'
     | '/students'
     | '/transcripts'
@@ -529,6 +541,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ResultEntryRoute: typeof ResultEntryRoute
   ResultsRoute: typeof ResultsRoute
+  SchoolsRoute: typeof SchoolsRoute
   SessionsRoute: typeof SessionsRoute
   StudentsRoute: typeof StudentsRoute
   TranscriptsRoute: typeof TranscriptsRoute
@@ -592,6 +605,13 @@ declare module '@tanstack/react-router' {
       path: '/sessions'
       fullPath: '/sessions'
       preLoaderRoute: typeof SessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schools': {
+      id: '/schools'
+      path: '/schools'
+      fullPath: '/schools'
+      preLoaderRoute: typeof SchoolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/results': {
@@ -865,6 +885,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ResultEntryRoute: ResultEntryRoute,
   ResultsRoute: ResultsRoute,
+  SchoolsRoute: SchoolsRoute,
   SessionsRoute: SessionsRoute,
   StudentsRoute: StudentsRoute,
   TranscriptsRoute: TranscriptsRoute,
