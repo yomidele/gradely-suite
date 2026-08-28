@@ -13,12 +13,16 @@ import { Route as ValidationAuditRouteImport } from './routes/validation-audit'
 import { Route as TranscriptsRouteImport } from './routes/transcripts'
 import { Route as StudentsRouteImport } from './routes/students'
 import { Route as SessionsRouteImport } from './routes/sessions'
+import { Route as SchoolsRouteImport } from './routes/schools'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as ResultEntryRouteImport } from './routes/result-entry'
+import { Route as ProgrammesRouteImport } from './routes/programmes'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as AuditLogsRouteImport } from './routes/audit-logs'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudentResultsRouteImport } from './routes/student.results'
 import { Route as StudentRegisterRouteImport } from './routes/student.register'
@@ -70,6 +74,11 @@ const SessionsRoute = SessionsRouteImport.update({
   path: '/sessions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SchoolsRoute = SchoolsRouteImport.update({
+  id: '/schools',
+  path: '/schools',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResultsRoute = ResultsRouteImport.update({
   id: '/results',
   path: '/results',
@@ -80,9 +89,19 @@ const ResultEntryRoute = ResultEntryRouteImport.update({
   path: '/result-entry',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgrammesRoute = ProgrammesRouteImport.update({
+  id: '/programmes',
+  path: '/programmes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DepartmentsRoute = DepartmentsRouteImport.update({
+  id: '/departments',
+  path: '/departments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -98,6 +117,11 @@ const CoursesRoute = CoursesRouteImport.update({
 const AuditLogsRoute = AuditLogsRouteImport.update({
   id: '/audit-logs',
   path: '/audit-logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -254,12 +278,16 @@ const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/audit-logs': typeof AuditLogsRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
+  '/programmes': typeof ProgrammesRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
+  '/schools': typeof SchoolsRoute
   '/sessions': typeof SessionsRoute
   '/students': typeof StudentsRoute
   '/transcripts': typeof TranscriptsRoute
@@ -296,12 +324,16 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/audit-logs': typeof AuditLogsRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
+  '/programmes': typeof ProgrammesRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
+  '/schools': typeof SchoolsRoute
   '/sessions': typeof SessionsRoute
   '/students': typeof StudentsRoute
   '/transcripts': typeof TranscriptsRoute
@@ -339,12 +371,16 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/audit-logs': typeof AuditLogsRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
+  '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
+  '/programmes': typeof ProgrammesRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
+  '/schools': typeof SchoolsRoute
   '/sessions': typeof SessionsRoute
   '/students': typeof StudentsRoute
   '/transcripts': typeof TranscriptsRoute
@@ -383,12 +419,16 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/audit-logs'
     | '/courses'
     | '/dashboard'
+    | '/departments'
     | '/login'
+    | '/programmes'
     | '/result-entry'
     | '/results'
+    | '/schools'
     | '/sessions'
     | '/students'
     | '/transcripts'
@@ -425,12 +465,16 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/audit-logs'
     | '/courses'
     | '/dashboard'
+    | '/departments'
     | '/login'
+    | '/programmes'
     | '/result-entry'
     | '/results'
+    | '/schools'
     | '/sessions'
     | '/students'
     | '/transcripts'
@@ -467,12 +511,16 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/audit-logs'
     | '/courses'
     | '/dashboard'
+    | '/departments'
     | '/login'
+    | '/programmes'
     | '/result-entry'
     | '/results'
+    | '/schools'
     | '/sessions'
     | '/students'
     | '/transcripts'
@@ -510,12 +558,16 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AuditLogsRoute: typeof AuditLogsRoute
   CoursesRoute: typeof CoursesRoute
   DashboardRoute: typeof DashboardRoute
+  DepartmentsRoute: typeof DepartmentsRoute
   LoginRoute: typeof LoginRoute
+  ProgrammesRoute: typeof ProgrammesRoute
   ResultEntryRoute: typeof ResultEntryRoute
   ResultsRoute: typeof ResultsRoute
+  SchoolsRoute: typeof SchoolsRoute
   SessionsRoute: typeof SessionsRoute
   StudentsRoute: typeof StudentsRoute
   TranscriptsRoute: typeof TranscriptsRoute
@@ -581,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SessionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/schools': {
+      id: '/schools'
+      path: '/schools'
+      fullPath: '/schools'
+      preLoaderRoute: typeof SchoolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/results': {
       id: '/results'
       path: '/results'
@@ -595,11 +654,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultEntryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/programmes': {
+      id: '/programmes'
+      path: '/programmes'
+      fullPath: '/programmes'
+      preLoaderRoute: typeof ProgrammesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/departments': {
+      id: '/departments'
+      path: '/departments'
+      fullPath: '/departments'
+      preLoaderRoute: typeof DepartmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -621,6 +694,13 @@ declare module '@tanstack/react-router' {
       path: '/audit-logs'
       fullPath: '/audit-logs'
       preLoaderRoute: typeof AuditLogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -838,12 +918,16 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AuditLogsRoute: AuditLogsRoute,
   CoursesRoute: CoursesRoute,
   DashboardRoute: DashboardRoute,
+  DepartmentsRoute: DepartmentsRoute,
   LoginRoute: LoginRoute,
+  ProgrammesRoute: ProgrammesRoute,
   ResultEntryRoute: ResultEntryRoute,
   ResultsRoute: ResultsRoute,
+  SchoolsRoute: SchoolsRoute,
   SessionsRoute: SessionsRoute,
   StudentsRoute: StudentsRoute,
   TranscriptsRoute: TranscriptsRoute,
