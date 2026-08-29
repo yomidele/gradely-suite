@@ -7,7 +7,7 @@ import { useAuthSession } from "@/hooks/use-auth";
 import { Users, ClipboardCheck, LinkIcon, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/dept-admin/dashboard")({
-  head: () => ({ meta: [{ title: "Department Dashboard — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Department Dashboard — Kazaure College" }] }),
   component: () => <ProtectedDeptAdmin><Page /></ProtectedDeptAdmin>,
 });
 

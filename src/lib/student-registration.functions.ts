@@ -87,7 +87,7 @@ export const registerStudentWithToken = createServerFn({ method: "POST" })
     }
     if (!fac) throw new Error("Faculty not found");
 
-    // 3. Reserve matric sequence atomically — format: TSU/<FAC>/<DEPT>/<YY>/<NNNN>
+    // 3. Reserve matric sequence atomically using the configured college format.
     const yearCode = String(new Date().getFullYear()).slice(-2);
     const facCode = (fac.code ?? "FAC").toUpperCase();
     const deptCode = (dept.code ?? "DEPT").toUpperCase();
@@ -96,7 +96,14 @@ export const registerStudentWithToken = createServerFn({ method: "POST" })
       _year_code: yearCode,
     });
     if (seqErr || typeof seq !== "number") throw new Error(seqErr?.message ?? "Could not allocate matric number");
-    const matric = `TSU/${facCode}/${deptCode}/${yearCode}/${String(seq).padStart(4, "0")}`;
+    const { data: settings } = await supabaseAdmin.from("college_settings").select("matric_format, matric_seq_padding").limit(1).maybeSingle();
+    const matricFormat = settings?.matric_format ?? "{DEPT}/{YY}/{SEQ}";
+    const sequence = String(seq).padStart(settings?.matric_seq_padding ?? 4, "0");
+    const matric = matricFormat
+      .replaceAll("{FAC}", facCode)
+      .replaceAll("{DEPT}", deptCode)
+      .replaceAll("{YY}", yearCode)
+      .replaceAll("{SEQ}", sequence);
 
     // 4. Create auth user
     const { data: created, error: signUpErr } = await supabaseAdmin.auth.admin.createUser({

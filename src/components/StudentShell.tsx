@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { TSUHeader } from "./TSUHeader";
-import { LayoutDashboard, User, GraduationCap, AlertTriangle, BookOpen, LogOut } from "lucide-react";
+import { LayoutDashboard, User, GraduationCap, AlertTriangle, BookOpen, LogOut, WalletCards, KeyRound, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,9 @@ const NAV = [
   { to: "/student/results", label: "My Results", icon: GraduationCap },
   { to: "/student/carryovers", label: "Carryovers", icon: AlertTriangle },
   { to: "/student/courses", label: "Course Registration", icon: BookOpen },
+  { to: "/student/services", label: "Student Services", icon: WalletCards },
+  { to: "/student/result-pins", label: "My Result PINs", icon: Ticket },
+  { to: "/student/password", label: "Change Password", icon: KeyRound },
 ] as const;
 
 export function StudentShell({ children }: { children: React.ReactNode }) {
@@ -85,7 +88,7 @@ export function StudentShell({ children }: { children: React.ReactNode }) {
         <main className="min-w-0 flex-1">{children}</main>
       </div>
       <footer className="border-t border-border py-3 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Shallom College of Education, Pambula Michika
+        © {new Date().getFullYear()} Kazaure College of Health Technology
       </footer>
     </div>
   );

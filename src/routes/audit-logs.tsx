@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { LogsIcon as LogIcon, Filter } from "lucide-react";
 
 export const Route = createFileRoute("/audit-logs")({
-  head: () => ({ meta: [{ title: "Audit Logs — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Audit Logs — Kazaure College" }] }),
   component: () => <ProtectedAdmin><AuditLogsPage /></ProtectedAdmin>,
 });
 

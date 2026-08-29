@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthSession } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/lecturer/dashboard")({
-  head: () => ({ meta: [{ title: "Lecturer Dashboard — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Lecturer Dashboard — Kazaure College" }] }),
   component: () => <ProtectedLecturer><Page /></ProtectedLecturer>,
 });
 

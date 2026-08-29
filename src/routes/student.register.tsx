@@ -20,7 +20,7 @@ import {
 const searchSchema = z.object({ token: z.string().optional() });
 
 export const Route = createFileRoute("/student/register")({
-  head: () => ({ meta: [{ title: "Student Registration — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Student Registration — Kazaure College" }] }),
   validateSearch: searchSchema,
   component: StudentRegisterPage,
 });

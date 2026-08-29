@@ -14,7 +14,7 @@ import { Loader2 } from "lucide-react";
 import { resolveMatricToEmail } from "@/lib/student-registration.functions";
 
 export const Route = createFileRoute("/student/login")({
-  head: () => ({ meta: [{ title: "Student Sign In — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Student Sign In — Kazaure College" }] }),
   component: StudentLoginPage,
 });
 

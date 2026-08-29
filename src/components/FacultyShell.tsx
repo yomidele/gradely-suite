@@ -76,7 +76,7 @@ export function FacultyShell({ children }: { children: React.ReactNode }) {
         <main className="min-w-0 flex-1">{children}</main>
       </div>
       <footer className="border-t border-border py-3 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Shallom College of Education, Pambula Michika — Faculty Portal
+        © {new Date().getFullYear()} Kazaure College of Health Technology — Faculty Portal
       </footer>
     </div>
   );

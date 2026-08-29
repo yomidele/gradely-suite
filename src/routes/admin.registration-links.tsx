@@ -15,7 +15,7 @@ import { Copy, Trash2 } from "lucide-react";
 import { createRegistrationLink, listRegistrationLinks, deleteRegistrationLink } from "@/lib/registration-links.functions";
 
 export const Route = createFileRoute("/admin/registration-links")({
-  head: () => ({ meta: [{ title: "Registration Links — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Registration Links — Kazaure College" }] }),
   component: () => <ProtectedAdmin><AdminLinksPage /></ProtectedAdmin>,
 });
 

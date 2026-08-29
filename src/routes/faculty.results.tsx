@@ -3,7 +3,7 @@ import { ProtectedFaculty } from "@/components/ProtectedFaculty";
 import { ResultsViewPage } from "./results";
 
 export const Route = createFileRoute("/faculty/results")({
-  head: () => ({ meta: [{ title: "Faculty Results — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Faculty Results — Kazaure College" }] }),
   component: () => (
     <ProtectedFaculty>
       <ResultsViewPage />

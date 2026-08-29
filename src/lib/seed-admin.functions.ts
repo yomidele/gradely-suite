@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const DEMO_EMAIL = "admin@tsu.demo";
+const DEMO_EMAIL = "admin@kazaure.demo";
 const DEMO_PASSWORD = "demo1234";
 
 export const ensureDemoAdmin = createServerFn({ method: "POST" }).handler(async () => {

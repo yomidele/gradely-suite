@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/faculty/login")({
-  head: () => ({ meta: [{ title: "Faculty Admin Sign In — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Faculty Admin Sign In — Kazaure College" }] }),
   component: FacultyLoginPage,
 });
 

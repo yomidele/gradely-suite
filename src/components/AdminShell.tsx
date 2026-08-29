@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { TSUHeader } from "./TSUHeader";
-import { LayoutDashboard, CalendarDays, BookOpen, Users, ClipboardEdit, FileSpreadsheet, FileText, LogOut, Building2, Shield, BarChart3, LinkIcon } from "lucide-react";
+import { LayoutDashboard, CalendarDays, BookOpen, Users, ClipboardEdit, FileSpreadsheet, FileText, LogOut, Building2, Shield, BarChart3, LinkIcon, Settings, GraduationCap, UserRoundCheck, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -17,6 +17,10 @@ const NAV = [
 ] as const;
 
 const SUPER_ADMIN_NAV = [
+  { to: "/admin/settings", label: "Settings", icon: Settings },
+  { to: "/admin/programmes", label: "Programmes", icon: GraduationCap },
+  { to: "/admin/applications", label: "Applications", icon: UserRoundCheck },
+  { to: "/admin/result-pins", label: "Result PINs", icon: KeyRound },
   { to: "/admin/faculties", label: "Faculties", icon: Building2 },
   { to: "/admin/faculty-admins", label: "Faculty Admins", icon: Shield },
   { to: "/admin/registration-links", label: "Registration Links", icon: LinkIcon },
@@ -91,7 +95,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <main className="min-w-0 flex-1">{children}</main>
       </div>
       <footer className="border-t border-border py-3 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Shallom College of Education, Pambula Michika — Demo build
+        © {new Date().getFullYear()} Kazaure College of Health Technology — Admin Portal
       </footer>
     </div>
   );

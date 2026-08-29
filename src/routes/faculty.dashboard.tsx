@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BookOpen, Users, ClipboardList, FileSpreadsheet } from "lucide-react";
 
 export const Route = createFileRoute("/faculty/dashboard")({
-  head: () => ({ meta: [{ title: "Faculty Dashboard — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Faculty Dashboard — Kazaure College" }] }),
   component: () => (
     <ProtectedFaculty>
       <FacultyDashboard />

@@ -42,7 +42,7 @@ function Home() {
   return (
     <PublicLayout>
       <section className="relative isolate overflow-hidden">
-        <img src={heroImg} alt="Health technology students in clinical training" className="absolute inset-0 h-full w-full object-cover" />
+        <img src={heroImg} alt="Muslim and Christian health technology students in clinical training" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-primary/85" />
         <div className="relative mx-auto max-w-7xl px-4 py-20 md:px-6 md:py-28">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">Admissions open for the new session</p>
@@ -50,7 +50,7 @@ function Home() {
             {settings.college_name}
           </h1>
           <p className="mt-4 max-w-2xl text-base text-primary-foreground/85 md:text-lg">
-            Training the next generation of Nigerian health professionals — nurses, laboratory scientists, community
+            Training Muslim and Christian students to become the next generation of Nigerian health professionals — nurses, laboratory scientists, community
             health practitioners and public health officers — from secondary school to certified practice.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">

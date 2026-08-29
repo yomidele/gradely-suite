@@ -3,7 +3,7 @@ import { ProtectedAdmin } from "@/components/ProtectedAdmin";
 import { ResultsEntryGrid } from "@/components/ResultsEntryGrid";
 
 export const Route = createFileRoute("/result-entry")({
-  head: () => ({ meta: [{ title: "Result Entry — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Result Entry — Kazaure College" }] }),
   component: () => (
     <ProtectedAdmin>
       <ResultEntryPage />

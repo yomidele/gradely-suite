@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { Lock } from "lucide-react";
 
 export const Route = createFileRoute("/student/courses")({
-  head: () => ({ meta: [{ title: "Course Registration — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Course Registration — Kazaure College" }] }),
   component: () => <ProtectedStudent><CourseRegPage /></ProtectedStudent>,
 });
 

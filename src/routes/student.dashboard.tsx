@@ -8,7 +8,7 @@ import { computeGrade, effectiveTotal, classOfDegree } from "@/lib/grading";
 import { GraduationCap, AlertTriangle, BookOpen, FileText } from "lucide-react";
 
 export const Route = createFileRoute("/student/dashboard")({
-  head: () => ({ meta: [{ title: "Student Dashboard — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Student Dashboard — Kazaure College" }] }),
   component: () => <ProtectedStudent><Dashboard /></ProtectedStudent>,
 });
 

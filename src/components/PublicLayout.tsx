@@ -11,6 +11,8 @@ const NAV = [
   { to: "/departments", label: "Departments" },
   { to: "/programmes", label: "Programmes" },
   { to: "/admissions", label: "Admissions" },
+  { to: "/news", label: "News" },
+  { to: "/check-result", label: "Check Result" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
@@ -72,6 +74,9 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="ml-auto flex items-center gap-2 lg:ml-2">
+            <Button asChild size="sm" variant="outline" className="hidden sm:inline-flex">
+              <Link to="/check-result">Check Result</Link>
+            </Button>
             <Button asChild size="sm" className="hidden sm:inline-flex">
               <Link to="/admissions">Apply Now</Link>
             </Button>

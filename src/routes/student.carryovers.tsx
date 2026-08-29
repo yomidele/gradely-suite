@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/student/carryovers")({
-  head: () => ({ meta: [{ title: "Carryovers — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Carryovers — Kazaure College" }] }),
   component: () => <ProtectedStudent><CarryoversPage /></ProtectedStudent>,
 });
 

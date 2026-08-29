@@ -12,11 +12,11 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Super Admin Sign in — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Super Admin Sign in — Kazaure College" }] }),
   component: LoginPage,
 });
 
-const DEMO_EMAIL = "admin@tsu.demo";
+const DEMO_EMAIL = "admin@kazaure.demo";
 const DEMO_PASSWORD = "demo1234";
 
 function LoginPage() {

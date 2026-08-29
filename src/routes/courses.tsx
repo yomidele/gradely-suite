@@ -16,7 +16,7 @@ import { Trash2, Edit2, AlertTriangle } from "lucide-react";
 import { editCourse, checkEditSafety } from "@/lib/course-editor";
 
 export const Route = createFileRoute("/courses")({
-  head: () => ({ meta: [{ title: "Courses — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Courses — Kazaure College" }] }),
   component: () => <ProtectedAdmin><CoursesPage /></ProtectedAdmin>,
 });
 

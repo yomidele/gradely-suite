@@ -15,7 +15,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export const Route = createFileRoute("/transcripts")({
-  head: () => ({ meta: [{ title: "Transcripts — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Transcripts — Kazaure College" }] }),
   component: () => <ProtectedAdmin><TranscriptsPage /></ProtectedAdmin>,
 });
 
@@ -142,7 +142,7 @@ export function TranscriptsPage() {
 
     // Header
     doc.setFont("helvetica", "bold"); doc.setFontSize(14);
-    doc.text("SHALLOM COLLEGE OF EDUCATION, PAMBULA MICHIKA", pageW / 2, y, { align: "center" }); y += 18;
+    doc.text("KAZAURE COLLEGE OF HEALTH TECHNOLOGY", pageW / 2, y, { align: "center" }); y += 18;
     doc.setFontSize(11); doc.setFont("helvetica", "normal");
     doc.text("Academic Transcript", pageW / 2, y, { align: "center" }); y += 22;
 
@@ -210,7 +210,7 @@ export function TranscriptsPage() {
           <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-1.5">
               <Label>Search by name or matric</Label>
-              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="e.g. Ahmed or SCOE/EDU/24/001" />
+              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="e.g. Ahmed or DEPT/24/001" />
             </div>
             <div className="space-y-1.5">
               <Label>Student</Label>

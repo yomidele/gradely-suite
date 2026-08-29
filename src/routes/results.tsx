@@ -25,7 +25,7 @@ import * as XLSX from "xlsx";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/results")({
-  head: () => ({ meta: [{ title: "View / Export Results — SCOE" }] }),
+  head: () => ({ meta: [{ title: "View / Export Results — Kazaure College" }] }),
   component: () => <ProtectedAdmin><ResultsViewPage /></ProtectedAdmin>,
 });
 
@@ -156,7 +156,7 @@ export function ResultsViewPage() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(detailRows), "Result Sheet");
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(summary), "GPA-CGPA Summary");
-    const fname = `SCOE_Results_${sessionName.replace("/","-")}_${semester}_${level}L.xlsx`;
+    const fname = `Kazaure_Results_${sessionName.replace("/","-")}_${semester}_${level}L.xlsx`;
     XLSX.writeFile(wb, fname);
     toast.success(`Exported ${fname}`);
   };
@@ -385,7 +385,7 @@ export function ResultsViewPage() {
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, `${level}L ${semester} Sem`);
-    const fname = `SCOE_Structured_${sessionName.replace("/","-")}_${semester}_${level}L.xlsx`;
+    const fname = `Kazaure_Structured_${sessionName.replace("/","-")}_${semester}_${level}L.xlsx`;
     XLSX.writeFile(wb, fname);
     toast.success(`Exported ${fname}`);
   };

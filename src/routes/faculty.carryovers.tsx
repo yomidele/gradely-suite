@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/faculty/carryovers")({
-  head: () => ({ meta: [{ title: "Faculty Carryovers — SCOE" }] }),
+  head: () => ({ meta: [{ title: "Faculty Carryovers — Kazaure College" }] }),
   component: () => <ProtectedFaculty><FacultyCarryoversPage /></ProtectedFaculty>,
 });
 

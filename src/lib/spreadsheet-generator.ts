@@ -3,7 +3,7 @@ import scoeLogoUrl from "@/assets/scoe-logo.jpg";
 import tsuLogoUrl from "@/assets/tsu-logo.jpg";
 
 /**
- * Standardized academic spreadsheet generator for SCOE.
+ * Standardized academic spreadsheet generator for Kazaure College of Health Technology.
  * Uses ExcelJS to embed both college logos into the header,
  * matching the official institutional result-sheet layout.
  */
@@ -45,9 +45,9 @@ export interface SpreadsheetConfig {
 // ============================================================================
 
 const FIXED_HEADER = [
-  "SHALOM COLLEGE OF EDUCATION PAMBULA MICHIKA",
-  "AN AFFILIATE OF TARABA STATE UNIVERSITY, JALINGO",
-  "FACULTY OF SOCIAL AND MANAGEMENT SCIENCES",
+  "KAZAURE COLLEGE OF HEALTH TECHNOLOGY",
+  "ACADEMIC RESULTS OFFICE",
+  "COLLEGE RESULTS SHEET",
 ];
 
 const VALID_LEVELS = [100, 200, 300, 400] as const;
@@ -97,7 +97,7 @@ export async function generateSpreadsheet(config: SpreadsheetConfig): Promise<Ex
   if (config.courseList.length === 0) throw new Error("No course list provided");
 
   const wb = new ExcelJS.Workbook();
-  wb.creator = "SCOE Pambula Michika";
+  wb.creator = "Kazaure College of Health Technology";
   wb.created = new Date();
 
   const sheetName = `${config.header.level}L ${
@@ -124,7 +124,7 @@ export async function generateSpreadsheet(config: SpreadsheetConfig): Promise<Ex
   // ------------------------------------------------------------------
   // Header lines + per-line font sizes (school name largest, then descending hierarchy)
   const headerLines: Array<{ text: string; size: number }> = [
-    { text: FIXED_HEADER[0], size: 22 }, // SHALOM COLLEGE OF EDUCATION PAMBULA MICHIKA
+    { text: FIXED_HEADER[0], size: 22 },
     { text: FIXED_HEADER[1], size: 12 }, // AN AFFILIATE OF TARABA STATE UNIVERSITY...
     { text: FIXED_HEADER[2], size: 11 }, // FACULTY OF SOCIAL AND MANAGEMENT SCIENCES
     { text: config.header.department.toUpperCase(), size: 11 },
@@ -364,5 +364,5 @@ export async function exportToExcel(workbook: ExcelJS.Workbook, filename: string
 }
 
 export function generateFilename(sessionName: string, semester: string, level: number): string {
-  return `SCOE_Results_${sessionName.replace(/\//g, "-")}_${semester}_${level}L.xlsx`;
+  return `Kazaure_Results_${sessionName.replace(/\//g, "-")}_${semester}_${level}L.xlsx`;
 }
