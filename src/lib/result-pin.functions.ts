@@ -3,8 +3,16 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { paystackInitialize, paystackVerify, isPaystackConfigured } from "./paystack.server";
+import {
+  generateSecurePin,
+  hashPin,
+  verifyPinAgainstHash,
+  generatePaymentReference,
+  generateVoucherNumber,
+  generateVerificationNumber,
+} from "./result-pin-crypto.server";
+import { generateVoucherPdf } from "./result-pin-voucher-pdf.server";
 import { DEFAULT_PIN_SETTINGS, type CollegeSettings, type PinSettings } from "./college-settings";
-import type { Json } from "@/integrations/supabase/types";
 
 const VOUCHER_BUCKET = "result-pin-vouchers";
 const RATE_LIMIT_WINDOW_MINUTES = 15;
@@ -25,7 +33,7 @@ async function auditLog(entry: {
   actor_id?: string | null;
   actor_email?: string | null;
   actor_role?: string | null;
-  details?: Json;
+  details?: Record<string, unknown>;
 }) {
   await supabaseAdmin.from("audit_logs").insert({
     action: entry.action,
@@ -34,7 +42,7 @@ async function auditLog(entry: {
     actor_id: entry.actor_id ?? null,
     actor_email: entry.actor_email ?? null,
     actor_role: entry.actor_role ?? "system",
-      details: entry.details ?? {},
+    details: entry.details ?? {},
   });
 }
 
@@ -115,7 +123,6 @@ export const initializePinPurchase = createServerFn({ method: "POST" })
 
     const settings = await getCollegeSettings();
     const price = settings.pin_settings.price;
-    const { generatePaymentReference } = await import("./result-pin-crypto.server");
     const reference = generatePaymentReference();
 
     const { data: payment, error } = await supabaseAdmin
@@ -155,15 +162,6 @@ export const initializePinPurchase = createServerFn({ method: "POST" })
 // Shared by the client-side callback page AND the Paystack webhook route.
 
 export async function verifyAndFulfilPinPayment(reference: string) {
-  const {
-    generateSecurePin,
-    hashPin,
-    generateVoucherNumber,
-  } = await import("./result-pin-crypto.server");
-  const { generateVoucherPdf } = await import("./result-pin-voucher-pdf.server");
-  const hashPepper = process.env["RESULT_PIN_HASH_PEPPER"];
-  if (!hashPepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
-
   const { data: payment, error: paymentError } = await supabaseAdmin
     .from("result_pin_payments")
     .select("*")
@@ -189,7 +187,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
   const verification = await paystackVerify(reference);
   if (verification.status !== "success") {
     await supabaseAdmin.from("result_pin_payments").update({
-      status: "failed", raw_response: verification as unknown as Json,
+      status: "failed", raw_response: verification as unknown as Record<string, unknown>,
     }).eq("id", payment.id);
     await auditLog({ action: "payment_failed", entity_type: "result_pin_payment", entity_id: payment.id, details: { reference } });
     throw new Error("Payment was not successful.");
@@ -203,7 +201,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
     await supabaseAdmin.from("result_pin_payments").update({
       status: "successful", verified_at: new Date().toISOString(),
       paystack_reference: verification.reference,
-      raw_response: verification as unknown as Json,
+      raw_response: verification as unknown as Record<string, unknown>,
     }).eq("id", payment.id);
     await auditLog({ action: "payment_successful", entity_type: "result_pin_payment", entity_id: payment.id, details: { reference } });
   }
@@ -228,7 +226,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
       session_id: payment.session_id,
       semester: payment.semester,
       payment_id: payment.id,
-      pin_hash: hashPin(rawPin, hashPepper),
+      pin_hash: hashPin(rawPin),
       pin_last4: rawPin.slice(-4),
       source: "online",
       status: "active",
@@ -327,9 +325,6 @@ async function recentFailureCount(matricNumber: string): Promise<number> {
 export const checkResult = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => checkSchema.parse(input))
   .handler(async ({ data }) => {
-    const { verifyPinAgainstHash, generateVerificationNumber } = await import("./result-pin-crypto.server");
-    const hashPepper = process.env["RESULT_PIN_HASH_PEPPER"];
-    if (!hashPepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
     const matric = data.matric_number.trim().toUpperCase();
 
     if ((await recentFailureCount(matric)) >= RATE_LIMIT_MAX_FAILURES) {
@@ -351,7 +346,7 @@ export const checkResult = createServerFn({ method: "POST" })
       .eq("session_id", data.session_id)
       .eq("semester", data.semester);
 
-    const match = (candidates ?? []).find((p) => verifyPinAgainstHash(data.pin, p.pin_hash, hashPepper));
+    const match = (candidates ?? []).find((p) => verifyPinAgainstHash(data.pin, p.pin_hash));
     if (!match) return fail("pin_mismatch");
 
     if (match.status === "disabled") throw new Error("This PIN has been disabled. Please contact the registry.");
@@ -498,7 +493,7 @@ async function requireAdmin(userId: string) {
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
-    .in("role", ["super_admin", "faculty_admin", "department_admin"])
+    .in("role", ["super_admin", "faculty_admin", "dept_admin"])
     .maybeSingle();
   if (!role) throw new Error("Forbidden: admin access required.");
 }
@@ -581,10 +576,6 @@ export const adminGenerateManualPin = createServerFn({ method: "POST" })
     if (!student) throw new Error("No student record found for that matriculation number.");
 
     const settings = await getCollegeSettings();
-    const { generateSecurePin, hashPin, generateVoucherNumber } = await import("./result-pin-crypto.server");
-    const { generateVoucherPdf } = await import("./result-pin-voucher-pdf.server");
-    const hashPepper = process.env["RESULT_PIN_HASH_PEPPER"];
-    if (!hashPepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
     const rawPin = generateSecurePin();
     const expiresAt = new Date(Date.now() + settings.pin_settings.expiry_days * 86_400_000);
 
@@ -592,7 +583,7 @@ export const adminGenerateManualPin = createServerFn({ method: "POST" })
       .from("result_pins")
       .insert({
         student_id: student.id, session_id: data.session_id, semester: data.semester,
-        pin_hash: hashPin(rawPin, hashPepper), pin_last4: rawPin.slice(-4), source: "manual", issued_by: context.userId,
+        pin_hash: hashPin(rawPin), pin_last4: rawPin.slice(-4), source: "manual", issued_by: context.userId,
         status: "active", max_views: settings.pin_settings.max_views, views_used: 0,
         expires_at: expiresAt.toISOString(), activated_at: new Date().toISOString(),
       })
