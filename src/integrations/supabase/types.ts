@@ -963,6 +963,203 @@ export type Database = {
         }
         Relationships: []
       }
+      report_verifications: {
+        Row: {
+          generated_at: string
+          id: string
+          result_pin_id: string | null
+          semester: string
+          session_id: string
+          student_id: string
+          verification_number: string
+        }
+        Insert: {
+          generated_at?: string
+          id?: string
+          result_pin_id?: string | null
+          semester: string
+          session_id: string
+          student_id: string
+          verification_number: string
+        }
+        Update: {
+          generated_at?: string
+          id?: string
+          result_pin_id?: string | null
+          semester?: string
+          session_id?: string
+          student_id?: string
+          verification_number?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_verifications_result_pin_id_fkey"
+            columns: ["result_pin_id"]
+            isOneToOne: false
+            referencedRelation: "result_pins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_verifications_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_verifications_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      result_pin_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          paystack_reference: string | null
+          raw_response: Json | null
+          reference: string
+          semester: string
+          session_id: string
+          status: string
+          student_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          paystack_reference?: string | null
+          raw_response?: Json | null
+          reference: string
+          semester: string
+          session_id: string
+          status?: string
+          student_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          paystack_reference?: string | null
+          raw_response?: Json | null
+          reference?: string
+          semester?: string
+          session_id?: string
+          status?: string
+          student_id?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "result_pin_payments_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "result_pin_payments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      result_pins: {
+        Row: {
+          activated_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          issued_by: string | null
+          last_used_at: string | null
+          max_views: number
+          payment_id: string | null
+          pin_hash: string
+          pin_last4: string
+          semester: string
+          session_id: string
+          source: string
+          status: string
+          student_id: string
+          verification_number: string | null
+          views_used: number
+          voucher_path: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          issued_by?: string | null
+          last_used_at?: string | null
+          max_views?: number
+          payment_id?: string | null
+          pin_hash: string
+          pin_last4: string
+          semester: string
+          session_id: string
+          source?: string
+          status?: string
+          student_id: string
+          verification_number?: string | null
+          views_used?: number
+          voucher_path?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          issued_by?: string | null
+          last_used_at?: string | null
+          max_views?: number
+          payment_id?: string | null
+          pin_hash?: string
+          pin_last4?: string
+          semester?: string
+          session_id?: string
+          source?: string
+          status?: string
+          student_id?: string
+          verification_number?: string | null
+          views_used?: number
+          voucher_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "result_pins_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "result_pin_payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "result_pins_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "academic_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "result_pins_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       results: {
         Row: {
           approved_at: string | null
