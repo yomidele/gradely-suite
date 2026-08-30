@@ -1,5 +1,5 @@
-// Server-only. Never import this from a route/*.functions.ts file that ships to the client bundle.
-import { randomBytes, createHash, timingSafeEqual } from "node:crypto";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex, randomBytes } from "@noble/hashes/utils.js";
 
 // Unambiguous charset: no 0/O, 1/I/L, to reduce transcription errors on the printed voucher.
 const PIN_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
@@ -18,42 +18,40 @@ export function generateSecurePin(): string {
   return groups.join("-");
 }
 
-function pepper(): string {
-  const p = process.env.RESULT_PIN_HASH_PEPPER;
-  if (!p) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
-  return p;
-}
-
 /** One-way hash of a PIN for storage. The raw PIN is never persisted. */
-export function hashPin(pin: string): string {
-  return createHash("sha256").update(`${pin.toUpperCase()}:${pepper()}`).digest("hex");
+export function hashPin(pin: string, pepper: string): string {
+  return bytesToHex(sha256(new TextEncoder().encode(`${pin.toUpperCase()}:${pepper}`)));
 }
 
 /** Constant-time comparison of a supplied PIN against a stored hash. */
-export function verifyPinAgainstHash(pin: string, hash: string): boolean {
-  const candidate = Buffer.from(hashPin(pin), "hex");
-  const stored = Buffer.from(hash, "hex");
-  if (candidate.length !== stored.length) return false;
-  return timingSafeEqual(candidate, stored);
+export function verifyPinAgainstHash(pin: string, hash: string, pepper: string): boolean {
+  const candidate = hashPin(pin, pepper);
+  if (candidate.length !== hash.length) return false;
+
+  let difference = 0;
+  for (let index = 0; index < candidate.length; index += 1) {
+    difference |= candidate.charCodeAt(index) ^ hash.charCodeAt(index);
+  }
+  return difference === 0;
 }
 
 /** Internal payment reference sent to Paystack, e.g. "RPP-2026-9F3K7QAB". */
 export function generatePaymentReference(): string {
   const year = new Date().getFullYear();
-  const rand = randomBytes(6).toString("hex").toUpperCase();
+  const rand = bytesToHex(randomBytes(6)).toUpperCase();
   return `RPP-${year}-${rand}`;
 }
 
 /** Voucher number printed on the PDF, e.g. "RPV-2026-4F91K2". */
 export function generateVoucherNumber(): string {
   const year = new Date().getFullYear();
-  const rand = randomBytes(4).toString("hex").toUpperCase().slice(0, 6);
+  const rand = bytesToHex(randomBytes(4)).toUpperCase().slice(0, 6);
   return `RPV-${year}-${rand}`;
 }
 
 /** Result verification number for the QR code / /verify-result page, e.g. "RES-2026-8F92KD". */
 export function generateVerificationNumber(): string {
   const year = new Date().getFullYear();
-  const rand = randomBytes(4).toString("hex").toUpperCase().slice(0, 6);
+  const rand = bytesToHex(randomBytes(4)).toUpperCase().slice(0, 6);
   return `RES-${year}-${rand}`;
 }
