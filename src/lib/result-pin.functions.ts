@@ -161,6 +161,8 @@ export async function verifyAndFulfilPinPayment(reference: string) {
     generateVoucherNumber,
   } = await import("./result-pin-crypto.server");
   const { generateVoucherPdf } = await import("./result-pin-voucher-pdf.server");
+  const hashPepper = process.env["RESULT_PIN_HASH_PEPPER"];
+  if (!hashPepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
 
   const { data: payment, error: paymentError } = await supabaseAdmin
     .from("result_pin_payments")
@@ -226,7 +228,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
       session_id: payment.session_id,
       semester: payment.semester,
       payment_id: payment.id,
-      pin_hash: hashPin(rawPin),
+      pin_hash: hashPin(rawPin, hashPepper),
       pin_last4: rawPin.slice(-4),
       source: "online",
       status: "active",
@@ -326,6 +328,8 @@ export const checkResult = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => checkSchema.parse(input))
   .handler(async ({ data }) => {
     const { verifyPinAgainstHash, generateVerificationNumber } = await import("./result-pin-crypto.server");
+    const hashPepper = process.env["RESULT_PIN_HASH_PEPPER"];
+    if (!hashPepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
     const matric = data.matric_number.trim().toUpperCase();
 
     if ((await recentFailureCount(matric)) >= RATE_LIMIT_MAX_FAILURES) {
@@ -347,7 +351,7 @@ export const checkResult = createServerFn({ method: "POST" })
       .eq("session_id", data.session_id)
       .eq("semester", data.semester);
 
-    const match = (candidates ?? []).find((p) => verifyPinAgainstHash(data.pin, p.pin_hash));
+    const match = (candidates ?? []).find((p) => verifyPinAgainstHash(data.pin, p.pin_hash, hashPepper));
     if (!match) return fail("pin_mismatch");
 
     if (match.status === "disabled") throw new Error("This PIN has been disabled. Please contact the registry.");
@@ -579,6 +583,8 @@ export const adminGenerateManualPin = createServerFn({ method: "POST" })
     const settings = await getCollegeSettings();
     const { generateSecurePin, hashPin, generateVoucherNumber } = await import("./result-pin-crypto.server");
     const { generateVoucherPdf } = await import("./result-pin-voucher-pdf.server");
+    const hashPepper = process.env["RESULT_PIN_HASH_PEPPER"];
+    if (!hashPepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
     const rawPin = generateSecurePin();
     const expiresAt = new Date(Date.now() + settings.pin_settings.expiry_days * 86_400_000);
 
@@ -586,7 +592,7 @@ export const adminGenerateManualPin = createServerFn({ method: "POST" })
       .from("result_pins")
       .insert({
         student_id: student.id, session_id: data.session_id, semester: data.semester,
-        pin_hash: hashPin(rawPin), pin_last4: rawPin.slice(-4), source: "manual", issued_by: context.userId,
+        pin_hash: hashPin(rawPin, hashPepper), pin_last4: rawPin.slice(-4), source: "manual", issued_by: context.userId,
         status: "active", max_views: settings.pin_settings.max_views, views_used: 0,
         expires_at: expiresAt.toISOString(), activated_at: new Date().toISOString(),
       })
