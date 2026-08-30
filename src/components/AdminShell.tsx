@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { TSUHeader } from "./TSUHeader";
-import { LayoutDashboard, CalendarDays, BookOpen, Users, ClipboardEdit, FileSpreadsheet, FileText, LogOut, Building2, Shield, BarChart3, LinkIcon, Settings, GraduationCap, UserRoundCheck, KeyRound } from "lucide-react";
+import { LayoutDashboard, CalendarDays, BookOpen, Users, ClipboardEdit, FileSpreadsheet, FileText, LogOut, Building2, Shield, BarChart3, LinkIcon, Settings, GraduationCap, UserRoundCheck, KeyRound, Newspaper, ScrollText, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -14,6 +14,8 @@ const NAV = [
   { to: "/result-entry", label: "Result Entry", icon: ClipboardEdit },
   { to: "/results", label: "View / Export Results", icon: FileSpreadsheet },
   { to: "/transcripts", label: "Transcripts", icon: FileText },
+  { to: "/audit-logs", label: "Audit Logs", icon: ScrollText },
+  { to: "/validation-audit", label: "Validation Audit", icon: ShieldCheck },
 ] as const;
 
 const SUPER_ADMIN_NAV = [
@@ -21,6 +23,7 @@ const SUPER_ADMIN_NAV = [
   { to: "/admin/programmes", label: "Programmes", icon: GraduationCap },
   { to: "/admin/applications", label: "Applications", icon: UserRoundCheck },
   { to: "/admin/result-pins", label: "Result PINs", icon: KeyRound },
+  { to: "/admin/news", label: "News", icon: Newspaper },
   { to: "/admin/faculties", label: "Faculties", icon: Building2 },
   { to: "/admin/faculty-admins", label: "Faculty Admins", icon: Shield },
   { to: "/admin/registration-links", label: "Registration Links", icon: LinkIcon },
