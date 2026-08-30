@@ -63,7 +63,6 @@ function SettingsPage() {
         use_gpa: form.use_gpa,
         pin_settings: form.pin_settings as unknown as Json,
         payment_settings: form.payment_settings as unknown as Json,
-        pin_settings: form.pin_settings, payment_settings: form.payment_settings,
       };
       const response = form.id
         ? await supabase.from("college_settings").update(values).eq("id", form.id)
