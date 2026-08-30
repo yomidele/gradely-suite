@@ -17,20 +17,32 @@ import { Route as SchoolsRouteImport } from './routes/schools'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as ResultEntryRouteImport } from './routes/result-entry'
 import { Route as ProgrammesRouteImport } from './routes/programmes'
+import { Route as NewsRouteImport } from './routes/news'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CoursesRouteImport } from './routes/courses'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CheckResultRouteImport } from './routes/check-result'
 import { Route as AuditLogsRouteImport } from './routes/audit-logs'
+import { Route as ApplyRouteImport } from './routes/apply'
+import { Route as AdmissionsRouteImport } from './routes/admissions'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VerifyResultCodeRouteImport } from './routes/verify-result.$code'
+import { Route as StudentServicesRouteImport } from './routes/student.services'
 import { Route as StudentResultsRouteImport } from './routes/student.results'
+import { Route as StudentResultPinsRouteImport } from './routes/student.result-pins'
 import { Route as StudentRegisterRouteImport } from './routes/student.register'
 import { Route as StudentProfileRouteImport } from './routes/student.profile'
+import { Route as StudentPasswordRouteImport } from './routes/student.password'
 import { Route as StudentLoginRouteImport } from './routes/student.login'
 import { Route as StudentDashboardRouteImport } from './routes/student.dashboard'
 import { Route as StudentCoursesRouteImport } from './routes/student.courses'
 import { Route as StudentCarryoversRouteImport } from './routes/student.carryovers'
+import { Route as ResultPinCallbackRouteImport } from './routes/result-pin.callback'
+import { Route as ResultPinBuyRouteImport } from './routes/result-pin.buy'
+import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as LecturerLoginRouteImport } from './routes/lecturer.login'
 import { Route as LecturerEntryRouteImport } from './routes/lecturer.entry'
 import { Route as LecturerDashboardRouteImport } from './routes/lecturer.dashboard'
@@ -49,9 +61,15 @@ import { Route as DeptAdminLecturersRouteImport } from './routes/dept-admin.lect
 import { Route as DeptAdminDashboardRouteImport } from './routes/dept-admin.dashboard'
 import { Route as DeptAdminAssignmentsRouteImport } from './routes/dept-admin.assignments'
 import { Route as DeptAdminApprovalsRouteImport } from './routes/dept-admin.approvals'
+import { Route as ApiPaystackWebhookRouteImport } from './routes/api.paystack-webhook'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminResultPinsRouteImport } from './routes/admin.result-pins'
 import { Route as AdminRegistrationLinksRouteImport } from './routes/admin.registration-links'
+import { Route as AdminProgrammesRouteImport } from './routes/admin.programmes'
+import { Route as AdminNewsRouteImport } from './routes/admin.news'
 import { Route as AdminFacultyAdminsRouteImport } from './routes/admin.faculty-admins'
 import { Route as AdminFacultiesRouteImport } from './routes/admin.faculties'
+import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 
 const ValidationAuditRoute = ValidationAuditRouteImport.update({
@@ -94,6 +112,11 @@ const ProgrammesRoute = ProgrammesRouteImport.update({
   path: '/programmes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -114,9 +137,29 @@ const CoursesRoute = CoursesRouteImport.update({
   path: '/courses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckResultRoute = CheckResultRouteImport.update({
+  id: '/check-result',
+  path: '/check-result',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuditLogsRoute = AuditLogsRouteImport.update({
   id: '/audit-logs',
   path: '/audit-logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyRoute = ApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdmissionsRoute = AdmissionsRouteImport.update({
+  id: '/admissions',
+  path: '/admissions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -129,9 +172,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerifyResultCodeRoute = VerifyResultCodeRouteImport.update({
+  id: '/verify-result/$code',
+  path: '/verify-result/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentServicesRoute = StudentServicesRouteImport.update({
+  id: '/student/services',
+  path: '/student/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudentResultsRoute = StudentResultsRouteImport.update({
   id: '/student/results',
   path: '/student/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentResultPinsRoute = StudentResultPinsRouteImport.update({
+  id: '/student/result-pins',
+  path: '/student/result-pins',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudentRegisterRoute = StudentRegisterRouteImport.update({
@@ -142,6 +200,11 @@ const StudentRegisterRoute = StudentRegisterRouteImport.update({
 const StudentProfileRoute = StudentProfileRouteImport.update({
   id: '/student/profile',
   path: '/student/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentPasswordRoute = StudentPasswordRouteImport.update({
+  id: '/student/password',
+  path: '/student/password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudentLoginRoute = StudentLoginRouteImport.update({
@@ -163,6 +226,21 @@ const StudentCarryoversRoute = StudentCarryoversRouteImport.update({
   id: '/student/carryovers',
   path: '/student/carryovers',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ResultPinCallbackRoute = ResultPinCallbackRouteImport.update({
+  id: '/result-pin/callback',
+  path: '/result-pin/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultPinBuyRoute = ResultPinBuyRouteImport.update({
+  id: '/result-pin/buy',
+  path: '/result-pin/buy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsSlugRoute = NewsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => NewsRoute,
 } as any)
 const LecturerLoginRoute = LecturerLoginRouteImport.update({
   id: '/lecturer/login',
@@ -255,9 +333,34 @@ const DeptAdminApprovalsRoute = DeptAdminApprovalsRouteImport.update({
   path: '/dept-admin/approvals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPaystackWebhookRoute = ApiPaystackWebhookRouteImport.update({
+  id: '/api/paystack-webhook',
+  path: '/api/paystack-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminResultPinsRoute = AdminResultPinsRouteImport.update({
+  id: '/admin/result-pins',
+  path: '/admin/result-pins',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRegistrationLinksRoute = AdminRegistrationLinksRouteImport.update({
   id: '/admin/registration-links',
   path: '/admin/registration-links',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminProgrammesRoute = AdminProgrammesRouteImport.update({
+  id: '/admin/programmes',
+  path: '/admin/programmes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminNewsRoute = AdminNewsRouteImport.update({
+  id: '/admin/news',
+  path: '/admin/news',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFacultyAdminsRoute = AdminFacultyAdminsRouteImport.update({
@@ -270,6 +373,11 @@ const AdminFacultiesRoute = AdminFacultiesRouteImport.update({
   path: '/admin/faculties',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
+  id: '/admin/applications',
+  path: '/admin/applications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
   id: '/admin/analytics',
   path: '/admin/analytics',
@@ -279,11 +387,16 @@ const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admissions': typeof AdmissionsRoute
+  '/apply': typeof ApplyRoute
   '/audit-logs': typeof AuditLogsRoute
+  '/check-result': typeof CheckResultRoute
+  '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
+  '/news': typeof NewsRouteWithChildren
   '/programmes': typeof ProgrammesRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
@@ -293,9 +406,15 @@ export interface FileRoutesByFullPath {
   '/transcripts': typeof TranscriptsRoute
   '/validation-audit': typeof ValidationAuditRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/applications': typeof AdminApplicationsRoute
   '/admin/faculties': typeof AdminFacultiesRoute
   '/admin/faculty-admins': typeof AdminFacultyAdminsRoute
+  '/admin/news': typeof AdminNewsRoute
+  '/admin/programmes': typeof AdminProgrammesRoute
   '/admin/registration-links': typeof AdminRegistrationLinksRoute
+  '/admin/result-pins': typeof AdminResultPinsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/api/paystack-webhook': typeof ApiPaystackWebhookRoute
   '/dept-admin/approvals': typeof DeptAdminApprovalsRoute
   '/dept-admin/assignments': typeof DeptAdminAssignmentsRoute
   '/dept-admin/dashboard': typeof DeptAdminDashboardRoute
@@ -314,22 +433,34 @@ export interface FileRoutesByFullPath {
   '/lecturer/dashboard': typeof LecturerDashboardRoute
   '/lecturer/entry': typeof LecturerEntryRoute
   '/lecturer/login': typeof LecturerLoginRoute
+  '/news/$slug': typeof NewsSlugRoute
+  '/result-pin/buy': typeof ResultPinBuyRoute
+  '/result-pin/callback': typeof ResultPinCallbackRoute
   '/student/carryovers': typeof StudentCarryoversRoute
   '/student/courses': typeof StudentCoursesRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/login': typeof StudentLoginRoute
+  '/student/password': typeof StudentPasswordRoute
   '/student/profile': typeof StudentProfileRoute
   '/student/register': typeof StudentRegisterRoute
+  '/student/result-pins': typeof StudentResultPinsRoute
   '/student/results': typeof StudentResultsRoute
+  '/student/services': typeof StudentServicesRoute
+  '/verify-result/$code': typeof VerifyResultCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admissions': typeof AdmissionsRoute
+  '/apply': typeof ApplyRoute
   '/audit-logs': typeof AuditLogsRoute
+  '/check-result': typeof CheckResultRoute
+  '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
+  '/news': typeof NewsRouteWithChildren
   '/programmes': typeof ProgrammesRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
@@ -339,9 +470,15 @@ export interface FileRoutesByTo {
   '/transcripts': typeof TranscriptsRoute
   '/validation-audit': typeof ValidationAuditRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/applications': typeof AdminApplicationsRoute
   '/admin/faculties': typeof AdminFacultiesRoute
   '/admin/faculty-admins': typeof AdminFacultyAdminsRoute
+  '/admin/news': typeof AdminNewsRoute
+  '/admin/programmes': typeof AdminProgrammesRoute
   '/admin/registration-links': typeof AdminRegistrationLinksRoute
+  '/admin/result-pins': typeof AdminResultPinsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/api/paystack-webhook': typeof ApiPaystackWebhookRoute
   '/dept-admin/approvals': typeof DeptAdminApprovalsRoute
   '/dept-admin/assignments': typeof DeptAdminAssignmentsRoute
   '/dept-admin/dashboard': typeof DeptAdminDashboardRoute
@@ -360,23 +497,35 @@ export interface FileRoutesByTo {
   '/lecturer/dashboard': typeof LecturerDashboardRoute
   '/lecturer/entry': typeof LecturerEntryRoute
   '/lecturer/login': typeof LecturerLoginRoute
+  '/news/$slug': typeof NewsSlugRoute
+  '/result-pin/buy': typeof ResultPinBuyRoute
+  '/result-pin/callback': typeof ResultPinCallbackRoute
   '/student/carryovers': typeof StudentCarryoversRoute
   '/student/courses': typeof StudentCoursesRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/login': typeof StudentLoginRoute
+  '/student/password': typeof StudentPasswordRoute
   '/student/profile': typeof StudentProfileRoute
   '/student/register': typeof StudentRegisterRoute
+  '/student/result-pins': typeof StudentResultPinsRoute
   '/student/results': typeof StudentResultsRoute
+  '/student/services': typeof StudentServicesRoute
+  '/verify-result/$code': typeof VerifyResultCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admissions': typeof AdmissionsRoute
+  '/apply': typeof ApplyRoute
   '/audit-logs': typeof AuditLogsRoute
+  '/check-result': typeof CheckResultRoute
+  '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
   '/dashboard': typeof DashboardRoute
   '/departments': typeof DepartmentsRoute
   '/login': typeof LoginRoute
+  '/news': typeof NewsRouteWithChildren
   '/programmes': typeof ProgrammesRoute
   '/result-entry': typeof ResultEntryRoute
   '/results': typeof ResultsRoute
@@ -386,9 +535,15 @@ export interface FileRoutesById {
   '/transcripts': typeof TranscriptsRoute
   '/validation-audit': typeof ValidationAuditRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/applications': typeof AdminApplicationsRoute
   '/admin/faculties': typeof AdminFacultiesRoute
   '/admin/faculty-admins': typeof AdminFacultyAdminsRoute
+  '/admin/news': typeof AdminNewsRoute
+  '/admin/programmes': typeof AdminProgrammesRoute
   '/admin/registration-links': typeof AdminRegistrationLinksRoute
+  '/admin/result-pins': typeof AdminResultPinsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/api/paystack-webhook': typeof ApiPaystackWebhookRoute
   '/dept-admin/approvals': typeof DeptAdminApprovalsRoute
   '/dept-admin/assignments': typeof DeptAdminAssignmentsRoute
   '/dept-admin/dashboard': typeof DeptAdminDashboardRoute
@@ -407,24 +562,36 @@ export interface FileRoutesById {
   '/lecturer/dashboard': typeof LecturerDashboardRoute
   '/lecturer/entry': typeof LecturerEntryRoute
   '/lecturer/login': typeof LecturerLoginRoute
+  '/news/$slug': typeof NewsSlugRoute
+  '/result-pin/buy': typeof ResultPinBuyRoute
+  '/result-pin/callback': typeof ResultPinCallbackRoute
   '/student/carryovers': typeof StudentCarryoversRoute
   '/student/courses': typeof StudentCoursesRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/login': typeof StudentLoginRoute
+  '/student/password': typeof StudentPasswordRoute
   '/student/profile': typeof StudentProfileRoute
   '/student/register': typeof StudentRegisterRoute
+  '/student/result-pins': typeof StudentResultPinsRoute
   '/student/results': typeof StudentResultsRoute
+  '/student/services': typeof StudentServicesRoute
+  '/verify-result/$code': typeof VerifyResultCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/admissions'
+    | '/apply'
     | '/audit-logs'
+    | '/check-result'
+    | '/contact'
     | '/courses'
     | '/dashboard'
     | '/departments'
     | '/login'
+    | '/news'
     | '/programmes'
     | '/result-entry'
     | '/results'
@@ -434,9 +601,15 @@ export interface FileRouteTypes {
     | '/transcripts'
     | '/validation-audit'
     | '/admin/analytics'
+    | '/admin/applications'
     | '/admin/faculties'
     | '/admin/faculty-admins'
+    | '/admin/news'
+    | '/admin/programmes'
     | '/admin/registration-links'
+    | '/admin/result-pins'
+    | '/admin/settings'
+    | '/api/paystack-webhook'
     | '/dept-admin/approvals'
     | '/dept-admin/assignments'
     | '/dept-admin/dashboard'
@@ -455,22 +628,34 @@ export interface FileRouteTypes {
     | '/lecturer/dashboard'
     | '/lecturer/entry'
     | '/lecturer/login'
+    | '/news/$slug'
+    | '/result-pin/buy'
+    | '/result-pin/callback'
     | '/student/carryovers'
     | '/student/courses'
     | '/student/dashboard'
     | '/student/login'
+    | '/student/password'
     | '/student/profile'
     | '/student/register'
+    | '/student/result-pins'
     | '/student/results'
+    | '/student/services'
+    | '/verify-result/$code'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/admissions'
+    | '/apply'
     | '/audit-logs'
+    | '/check-result'
+    | '/contact'
     | '/courses'
     | '/dashboard'
     | '/departments'
     | '/login'
+    | '/news'
     | '/programmes'
     | '/result-entry'
     | '/results'
@@ -480,9 +665,15 @@ export interface FileRouteTypes {
     | '/transcripts'
     | '/validation-audit'
     | '/admin/analytics'
+    | '/admin/applications'
     | '/admin/faculties'
     | '/admin/faculty-admins'
+    | '/admin/news'
+    | '/admin/programmes'
     | '/admin/registration-links'
+    | '/admin/result-pins'
+    | '/admin/settings'
+    | '/api/paystack-webhook'
     | '/dept-admin/approvals'
     | '/dept-admin/assignments'
     | '/dept-admin/dashboard'
@@ -501,22 +692,34 @@ export interface FileRouteTypes {
     | '/lecturer/dashboard'
     | '/lecturer/entry'
     | '/lecturer/login'
+    | '/news/$slug'
+    | '/result-pin/buy'
+    | '/result-pin/callback'
     | '/student/carryovers'
     | '/student/courses'
     | '/student/dashboard'
     | '/student/login'
+    | '/student/password'
     | '/student/profile'
     | '/student/register'
+    | '/student/result-pins'
     | '/student/results'
+    | '/student/services'
+    | '/verify-result/$code'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admissions'
+    | '/apply'
     | '/audit-logs'
+    | '/check-result'
+    | '/contact'
     | '/courses'
     | '/dashboard'
     | '/departments'
     | '/login'
+    | '/news'
     | '/programmes'
     | '/result-entry'
     | '/results'
@@ -526,9 +729,15 @@ export interface FileRouteTypes {
     | '/transcripts'
     | '/validation-audit'
     | '/admin/analytics'
+    | '/admin/applications'
     | '/admin/faculties'
     | '/admin/faculty-admins'
+    | '/admin/news'
+    | '/admin/programmes'
     | '/admin/registration-links'
+    | '/admin/result-pins'
+    | '/admin/settings'
+    | '/api/paystack-webhook'
     | '/dept-admin/approvals'
     | '/dept-admin/assignments'
     | '/dept-admin/dashboard'
@@ -547,23 +756,35 @@ export interface FileRouteTypes {
     | '/lecturer/dashboard'
     | '/lecturer/entry'
     | '/lecturer/login'
+    | '/news/$slug'
+    | '/result-pin/buy'
+    | '/result-pin/callback'
     | '/student/carryovers'
     | '/student/courses'
     | '/student/dashboard'
     | '/student/login'
+    | '/student/password'
     | '/student/profile'
     | '/student/register'
+    | '/student/result-pins'
     | '/student/results'
+    | '/student/services'
+    | '/verify-result/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdmissionsRoute: typeof AdmissionsRoute
+  ApplyRoute: typeof ApplyRoute
   AuditLogsRoute: typeof AuditLogsRoute
+  CheckResultRoute: typeof CheckResultRoute
+  ContactRoute: typeof ContactRoute
   CoursesRoute: typeof CoursesRoute
   DashboardRoute: typeof DashboardRoute
   DepartmentsRoute: typeof DepartmentsRoute
   LoginRoute: typeof LoginRoute
+  NewsRoute: typeof NewsRouteWithChildren
   ProgrammesRoute: typeof ProgrammesRoute
   ResultEntryRoute: typeof ResultEntryRoute
   ResultsRoute: typeof ResultsRoute
@@ -573,9 +794,15 @@ export interface RootRouteChildren {
   TranscriptsRoute: typeof TranscriptsRoute
   ValidationAuditRoute: typeof ValidationAuditRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminApplicationsRoute: typeof AdminApplicationsRoute
   AdminFacultiesRoute: typeof AdminFacultiesRoute
   AdminFacultyAdminsRoute: typeof AdminFacultyAdminsRoute
+  AdminNewsRoute: typeof AdminNewsRoute
+  AdminProgrammesRoute: typeof AdminProgrammesRoute
   AdminRegistrationLinksRoute: typeof AdminRegistrationLinksRoute
+  AdminResultPinsRoute: typeof AdminResultPinsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  ApiPaystackWebhookRoute: typeof ApiPaystackWebhookRoute
   DeptAdminApprovalsRoute: typeof DeptAdminApprovalsRoute
   DeptAdminAssignmentsRoute: typeof DeptAdminAssignmentsRoute
   DeptAdminDashboardRoute: typeof DeptAdminDashboardRoute
@@ -594,13 +821,19 @@ export interface RootRouteChildren {
   LecturerDashboardRoute: typeof LecturerDashboardRoute
   LecturerEntryRoute: typeof LecturerEntryRoute
   LecturerLoginRoute: typeof LecturerLoginRoute
+  ResultPinBuyRoute: typeof ResultPinBuyRoute
+  ResultPinCallbackRoute: typeof ResultPinCallbackRoute
   StudentCarryoversRoute: typeof StudentCarryoversRoute
   StudentCoursesRoute: typeof StudentCoursesRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
   StudentLoginRoute: typeof StudentLoginRoute
+  StudentPasswordRoute: typeof StudentPasswordRoute
   StudentProfileRoute: typeof StudentProfileRoute
   StudentRegisterRoute: typeof StudentRegisterRoute
+  StudentResultPinsRoute: typeof StudentResultPinsRoute
   StudentResultsRoute: typeof StudentResultsRoute
+  StudentServicesRoute: typeof StudentServicesRoute
+  VerifyResultCodeRoute: typeof VerifyResultCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -661,6 +894,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProgrammesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -689,11 +929,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoursesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/check-result': {
+      id: '/check-result'
+      path: '/check-result'
+      fullPath: '/check-result'
+      preLoaderRoute: typeof CheckResultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/audit-logs': {
       id: '/audit-logs'
       path: '/audit-logs'
       fullPath: '/audit-logs'
       preLoaderRoute: typeof AuditLogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply': {
+      id: '/apply'
+      path: '/apply'
+      fullPath: '/apply'
+      preLoaderRoute: typeof ApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admissions': {
+      id: '/admissions'
+      path: '/admissions'
+      fullPath: '/admissions'
+      preLoaderRoute: typeof AdmissionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -710,11 +978,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verify-result/$code': {
+      id: '/verify-result/$code'
+      path: '/verify-result/$code'
+      fullPath: '/verify-result/$code'
+      preLoaderRoute: typeof VerifyResultCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/services': {
+      id: '/student/services'
+      path: '/student/services'
+      fullPath: '/student/services'
+      preLoaderRoute: typeof StudentServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/student/results': {
       id: '/student/results'
       path: '/student/results'
       fullPath: '/student/results'
       preLoaderRoute: typeof StudentResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/result-pins': {
+      id: '/student/result-pins'
+      path: '/student/result-pins'
+      fullPath: '/student/result-pins'
+      preLoaderRoute: typeof StudentResultPinsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/student/register': {
@@ -729,6 +1018,13 @@ declare module '@tanstack/react-router' {
       path: '/student/profile'
       fullPath: '/student/profile'
       preLoaderRoute: typeof StudentProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/password': {
+      id: '/student/password'
+      path: '/student/password'
+      fullPath: '/student/password'
+      preLoaderRoute: typeof StudentPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/student/login': {
@@ -758,6 +1054,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/student/carryovers'
       preLoaderRoute: typeof StudentCarryoversRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/result-pin/callback': {
+      id: '/result-pin/callback'
+      path: '/result-pin/callback'
+      fullPath: '/result-pin/callback'
+      preLoaderRoute: typeof ResultPinCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/result-pin/buy': {
+      id: '/result-pin/buy'
+      path: '/result-pin/buy'
+      fullPath: '/result-pin/buy'
+      preLoaderRoute: typeof ResultPinBuyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news/$slug': {
+      id: '/news/$slug'
+      path: '/$slug'
+      fullPath: '/news/$slug'
+      preLoaderRoute: typeof NewsSlugRouteImport
+      parentRoute: typeof NewsRoute
     }
     '/lecturer/login': {
       id: '/lecturer/login'
@@ -885,11 +1202,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DeptAdminApprovalsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/paystack-webhook': {
+      id: '/api/paystack-webhook'
+      path: '/api/paystack-webhook'
+      fullPath: '/api/paystack-webhook'
+      preLoaderRoute: typeof ApiPaystackWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/result-pins': {
+      id: '/admin/result-pins'
+      path: '/admin/result-pins'
+      fullPath: '/admin/result-pins'
+      preLoaderRoute: typeof AdminResultPinsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/registration-links': {
       id: '/admin/registration-links'
       path: '/admin/registration-links'
       fullPath: '/admin/registration-links'
       preLoaderRoute: typeof AdminRegistrationLinksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/programmes': {
+      id: '/admin/programmes'
+      path: '/admin/programmes'
+      fullPath: '/admin/programmes'
+      preLoaderRoute: typeof AdminProgrammesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/news': {
+      id: '/admin/news'
+      path: '/admin/news'
+      fullPath: '/admin/news'
+      preLoaderRoute: typeof AdminNewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/faculty-admins': {
@@ -906,6 +1258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFacultiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/applications': {
+      id: '/admin/applications'
+      path: '/admin/applications'
+      fullPath: '/admin/applications'
+      preLoaderRoute: typeof AdminApplicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/analytics': {
       id: '/admin/analytics'
       path: '/admin/analytics'
@@ -916,14 +1275,29 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface NewsRouteChildren {
+  NewsSlugRoute: typeof NewsSlugRoute
+}
+
+const NewsRouteChildren: NewsRouteChildren = {
+  NewsSlugRoute: NewsSlugRoute,
+}
+
+const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdmissionsRoute: AdmissionsRoute,
+  ApplyRoute: ApplyRoute,
   AuditLogsRoute: AuditLogsRoute,
+  CheckResultRoute: CheckResultRoute,
+  ContactRoute: ContactRoute,
   CoursesRoute: CoursesRoute,
   DashboardRoute: DashboardRoute,
   DepartmentsRoute: DepartmentsRoute,
   LoginRoute: LoginRoute,
+  NewsRoute: NewsRouteWithChildren,
   ProgrammesRoute: ProgrammesRoute,
   ResultEntryRoute: ResultEntryRoute,
   ResultsRoute: ResultsRoute,
@@ -933,9 +1307,15 @@ const rootRouteChildren: RootRouteChildren = {
   TranscriptsRoute: TranscriptsRoute,
   ValidationAuditRoute: ValidationAuditRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminApplicationsRoute: AdminApplicationsRoute,
   AdminFacultiesRoute: AdminFacultiesRoute,
   AdminFacultyAdminsRoute: AdminFacultyAdminsRoute,
+  AdminNewsRoute: AdminNewsRoute,
+  AdminProgrammesRoute: AdminProgrammesRoute,
   AdminRegistrationLinksRoute: AdminRegistrationLinksRoute,
+  AdminResultPinsRoute: AdminResultPinsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  ApiPaystackWebhookRoute: ApiPaystackWebhookRoute,
   DeptAdminApprovalsRoute: DeptAdminApprovalsRoute,
   DeptAdminAssignmentsRoute: DeptAdminAssignmentsRoute,
   DeptAdminDashboardRoute: DeptAdminDashboardRoute,
@@ -954,13 +1334,19 @@ const rootRouteChildren: RootRouteChildren = {
   LecturerDashboardRoute: LecturerDashboardRoute,
   LecturerEntryRoute: LecturerEntryRoute,
   LecturerLoginRoute: LecturerLoginRoute,
+  ResultPinBuyRoute: ResultPinBuyRoute,
+  ResultPinCallbackRoute: ResultPinCallbackRoute,
   StudentCarryoversRoute: StudentCarryoversRoute,
   StudentCoursesRoute: StudentCoursesRoute,
   StudentDashboardRoute: StudentDashboardRoute,
   StudentLoginRoute: StudentLoginRoute,
+  StudentPasswordRoute: StudentPasswordRoute,
   StudentProfileRoute: StudentProfileRoute,
   StudentRegisterRoute: StudentRegisterRoute,
+  StudentResultPinsRoute: StudentResultPinsRoute,
   StudentResultsRoute: StudentResultsRoute,
+  StudentServicesRoute: StudentServicesRoute,
+  VerifyResultCodeRoute: VerifyResultCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
