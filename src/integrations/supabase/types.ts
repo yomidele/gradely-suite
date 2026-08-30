@@ -64,6 +64,112 @@ export type Database = {
           },
         ]
       }
+      applicants: {
+        Row: {
+          address: string | null
+          applicant_number: string
+          created_at: string
+          date_of_birth: string | null
+          email: string
+          full_name: string
+          gender: string | null
+          id: string
+          phone: string | null
+          qualification: string | null
+          state_of_origin: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          applicant_number?: string
+          created_at?: string
+          date_of_birth?: string | null
+          email: string
+          full_name: string
+          gender?: string | null
+          id?: string
+          phone?: string | null
+          qualification?: string | null
+          state_of_origin?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          applicant_number?: string
+          created_at?: string
+          date_of_birth?: string | null
+          email?: string
+          full_name?: string
+          gender?: string | null
+          id?: string
+          phone?: string | null
+          qualification?: string | null
+          state_of_origin?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      applications: {
+        Row: {
+          applicant_id: string
+          converted_student_id: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          programme_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          applicant_id: string
+          converted_student_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          programme_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          applicant_id?: string
+          converted_student_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          programme_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
+            referencedRelation: "applicants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_converted_student_id_fkey"
+            columns: ["converted_student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_programme_id_fkey"
+            columns: ["programme_id"]
+            isOneToOne: false
+            referencedRelation: "programmes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -692,6 +798,51 @@ export type Database = {
           department_id?: string
           last_seq?: number
           year_code?: string
+        }
+        Relationships: []
+      }
+      news_posts: {
+        Row: {
+          author_name: string | null
+          category: string
+          content: string
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_published: boolean
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_name?: string | null
+          category?: string
+          content: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string | null
+          category?: string
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
