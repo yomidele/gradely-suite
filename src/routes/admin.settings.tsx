@@ -58,7 +58,11 @@ function SettingsPage() {
         logo_url: form.logo_url, address: form.address, city: form.city, state: form.state,
         phone: form.phone, email: form.email, website: form.website, socials: parsedSocials,
         matric_format: form.matric_format.trim(), matric_seq_padding: form.matric_seq_padding,
-        grading_scale: parsedScale as unknown as Json, pass_mark: form.pass_mark, use_gpa: form.use_gpa,
+        grading_scale: parsedScale as unknown as Json,
+        pass_mark: form.pass_mark,
+        use_gpa: form.use_gpa,
+        pin_settings: form.pin_settings as unknown as Json,
+        payment_settings: form.payment_settings as unknown as Json,
         pin_settings: form.pin_settings, payment_settings: form.payment_settings,
       };
       const response = form.id

@@ -325,6 +325,7 @@ async function recentFailureCount(matricNumber: string): Promise<number> {
 export const checkResult = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => checkSchema.parse(input))
   .handler(async ({ data }) => {
+    const { verifyPinAgainstHash, generateVerificationNumber } = await import("./result-pin-crypto.server");
     const matric = data.matric_number.trim().toUpperCase();
 
     if ((await recentFailureCount(matric)) >= RATE_LIMIT_MAX_FAILURES) {
@@ -379,7 +380,6 @@ export const checkResult = createServerFn({ method: "POST" })
 
     let verificationNumber = match.verification_number;
     if (!verificationNumber) {
-      const { generateVerificationNumber } = await import("./result-pin-crypto.server");
       verificationNumber = generateVerificationNumber();
       await supabaseAdmin.from("result_pins").update({ verification_number: verificationNumber }).eq("id", match.id);
       await supabaseAdmin.from("report_verifications").insert({
