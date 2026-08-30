@@ -3,16 +3,8 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { paystackInitialize, paystackVerify, isPaystackConfigured } from "./paystack.server";
-import {
-  generateSecurePin,
-  hashPin,
-  verifyPinAgainstHash,
-  generatePaymentReference,
-  generateVoucherNumber,
-  generateVerificationNumber,
-} from "./result-pin-crypto.server";
-import { generateVoucherPdf } from "./result-pin-voucher-pdf.server";
 import { DEFAULT_PIN_SETTINGS, type CollegeSettings, type PinSettings } from "./college-settings";
+import type { Json } from "@/integrations/supabase/types";
 
 const VOUCHER_BUCKET = "result-pin-vouchers";
 const RATE_LIMIT_WINDOW_MINUTES = 15;
@@ -33,7 +25,7 @@ async function auditLog(entry: {
   actor_id?: string | null;
   actor_email?: string | null;
   actor_role?: string | null;
-  details?: Record<string, unknown>;
+  details?: Json;
 }) {
   await supabaseAdmin.from("audit_logs").insert({
     action: entry.action,
@@ -42,7 +34,7 @@ async function auditLog(entry: {
     actor_id: entry.actor_id ?? null,
     actor_email: entry.actor_email ?? null,
     actor_role: entry.actor_role ?? "system",
-    details: entry.details ?? {},
+      details: entry.details ?? {},
   });
 }
 
@@ -123,6 +115,7 @@ export const initializePinPurchase = createServerFn({ method: "POST" })
 
     const settings = await getCollegeSettings();
     const price = settings.pin_settings.price;
+    const { generatePaymentReference } = await import("./result-pin-crypto.server");
     const reference = generatePaymentReference();
 
     const { data: payment, error } = await supabaseAdmin
@@ -162,6 +155,13 @@ export const initializePinPurchase = createServerFn({ method: "POST" })
 // Shared by the client-side callback page AND the Paystack webhook route.
 
 export async function verifyAndFulfilPinPayment(reference: string) {
+  const {
+    generateSecurePin,
+    hashPin,
+    generateVoucherNumber,
+  } = await import("./result-pin-crypto.server");
+  const { generateVoucherPdf } = await import("./result-pin-voucher-pdf.server");
+
   const { data: payment, error: paymentError } = await supabaseAdmin
     .from("result_pin_payments")
     .select("*")
@@ -187,7 +187,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
   const verification = await paystackVerify(reference);
   if (verification.status !== "success") {
     await supabaseAdmin.from("result_pin_payments").update({
-      status: "failed", raw_response: verification as unknown as Record<string, unknown>,
+      status: "failed", raw_response: verification as unknown as Json,
     }).eq("id", payment.id);
     await auditLog({ action: "payment_failed", entity_type: "result_pin_payment", entity_id: payment.id, details: { reference } });
     throw new Error("Payment was not successful.");
@@ -201,7 +201,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
     await supabaseAdmin.from("result_pin_payments").update({
       status: "successful", verified_at: new Date().toISOString(),
       paystack_reference: verification.reference,
-      raw_response: verification as unknown as Record<string, unknown>,
+      raw_response: verification as unknown as Json,
     }).eq("id", payment.id);
     await auditLog({ action: "payment_successful", entity_type: "result_pin_payment", entity_id: payment.id, details: { reference } });
   }
@@ -325,6 +325,7 @@ async function recentFailureCount(matricNumber: string): Promise<number> {
 export const checkResult = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => checkSchema.parse(input))
   .handler(async ({ data }) => {
+    const { verifyPinAgainstHash, generateVerificationNumber } = await import("./result-pin-crypto.server");
     const matric = data.matric_number.trim().toUpperCase();
 
     if ((await recentFailureCount(matric)) >= RATE_LIMIT_MAX_FAILURES) {
@@ -493,7 +494,7 @@ async function requireAdmin(userId: string) {
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
-    .in("role", ["super_admin", "faculty_admin", "dept_admin"])
+    .in("role", ["super_admin", "faculty_admin", "department_admin"])
     .maybeSingle();
   if (!role) throw new Error("Forbidden: admin access required.");
 }
@@ -576,6 +577,8 @@ export const adminGenerateManualPin = createServerFn({ method: "POST" })
     if (!student) throw new Error("No student record found for that matriculation number.");
 
     const settings = await getCollegeSettings();
+    const { generateSecurePin, hashPin, generateVoucherNumber } = await import("./result-pin-crypto.server");
+    const { generateVoucherPdf } = await import("./result-pin-voucher-pdf.server");
     const rawPin = generateSecurePin();
     const expiresAt = new Date(Date.now() + settings.pin_settings.expiry_days * 86_400_000);
 
