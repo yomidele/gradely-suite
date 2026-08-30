@@ -187,10 +187,10 @@ INSERT INTO public.college_settings (
   college_name, short_name, motto, address, city, state, phone, email, website,
   matric_format, grading_scale, pass_mark, use_gpa
 ) VALUES (
-  'Shallom College of Health Technology', 'SCHT',
+  'Kazaure College of Health Technology', 'KCOHT',
   'Knowledge, Service, Compassion',
-  'Pambula Michika, Adamawa State', 'Michika', 'Adamawa',
-  '+234 803 000 0000', 'info@schealthtech.edu.ng', 'https://schealthtech.edu.ng',
+  'Kazaure, Jigawa State', 'Kazaure', 'Jigawa',
+  '+234 803 000 0000', 'info@kazaurecoht.edu.ng', 'https://kazaurecoht.edu.ng',
   '{DEPT}/{YY}/{SEQ}',
   '[{"grade":"A","min":70,"point":5,"remark":"Excellent"},
     {"grade":"B","min":60,"point":4,"remark":"Very Good"},
