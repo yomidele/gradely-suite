@@ -162,7 +162,7 @@ export const initializePinPurchase = createServerFn({ method: "POST" })
 // ── core: verify payment + issue PIN (idempotent) ───────────────────────────
 // Shared by the client-side callback page AND the Paystack webhook route.
 
-export async function verifyAndFulfilPinPayment(reference: string) {
+export async function verifyAndFulfilPinPayment(reference: string, pepper: string) {
   const { data: payment, error: paymentError } = await supabaseAdmin
     .from("result_pin_payments")
     .select("*")
@@ -227,7 +227,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
       session_id: payment.session_id,
       semester: payment.semester,
       payment_id: payment.id,
-      pin_hash: hashPin(rawPin),
+       pin_hash: hashPin(rawPin, pepper),
       pin_last4: rawPin.slice(-4),
       source: "online",
       status: "active",
@@ -284,7 +284,9 @@ export async function verifyAndFulfilPinPayment(reference: string) {
 export const verifyPinPurchase = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ reference: z.string().min(6) }).parse(input))
   .handler(async ({ data }) => {
-    const result = await verifyAndFulfilPinPayment(data.reference);
+    const pepper = process.env.RESULT_PIN_HASH_PEPPER;
+    if (!pepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
+    const result = await verifyAndFulfilPinPayment(data.reference, pepper);
     let voucherUrl = "voucherUrl" in result ? result.voucherUrl : null;
     if (!voucherUrl && result.pin.voucher_path) {
       const { data: signed } = await supabaseAdmin.storage.from(VOUCHER_BUCKET).createSignedUrl(result.pin.voucher_path, 60 * 60);
@@ -326,6 +328,8 @@ async function recentFailureCount(matricNumber: string): Promise<number> {
 export const checkResult = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => checkSchema.parse(input))
   .handler(async ({ data }) => {
+    const pepper = process.env.RESULT_PIN_HASH_PEPPER;
+    if (!pepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
     const matric = data.matric_number.trim().toUpperCase();
 
     if ((await recentFailureCount(matric)) >= RATE_LIMIT_MAX_FAILURES) {
@@ -347,7 +351,7 @@ export const checkResult = createServerFn({ method: "POST" })
       .eq("session_id", data.session_id)
       .eq("semester", data.semester);
 
-    const match = (candidates ?? []).find((p) => verifyPinAgainstHash(data.pin, p.pin_hash));
+    const match = (candidates ?? []).find((p) => verifyPinAgainstHash(data.pin, p.pin_hash, pepper));
     if (!match) return fail("pin_mismatch");
 
     if (match.status === "disabled") throw new Error("This PIN has been disabled. Please contact the registry.");
@@ -572,6 +576,8 @@ export const adminGenerateManualPin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => manualSchema.parse(input))
   .handler(async ({ data, context }) => {
+    const pepper = process.env.RESULT_PIN_HASH_PEPPER;
+    if (!pepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
     await requireAdmin(context.userId);
     const student = await findStudentByMatric(data.matric_number);
     if (!student) throw new Error("No student record found for that matriculation number.");
@@ -584,7 +590,7 @@ export const adminGenerateManualPin = createServerFn({ method: "POST" })
       .from("result_pins")
       .insert({
         student_id: student.id, session_id: data.session_id, semester: data.semester,
-        pin_hash: hashPin(rawPin), pin_last4: rawPin.slice(-4), source: "manual", issued_by: context.userId,
+       pin_hash: hashPin(rawPin, pepper), pin_last4: rawPin.slice(-4), source: "manual", issued_by: context.userId,
         status: "active", max_views: settings.pin_settings.max_views, views_used: 0,
         expires_at: expiresAt.toISOString(), activated_at: new Date().toISOString(),
       })
