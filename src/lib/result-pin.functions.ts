@@ -13,6 +13,7 @@ import {
 } from "./result-pin-crypto.server";
 import { generateVoucherPdf } from "./result-pin-voucher-pdf.server";
 import { DEFAULT_PIN_SETTINGS, type CollegeSettings, type PinSettings } from "./college-settings";
+import type { Json } from "@/integrations/supabase/types";
 
 const VOUCHER_BUCKET = "result-pin-vouchers";
 const RATE_LIMIT_WINDOW_MINUTES = 15;
@@ -42,7 +43,7 @@ async function auditLog(entry: {
     actor_id: entry.actor_id ?? null,
     actor_email: entry.actor_email ?? null,
     actor_role: entry.actor_role ?? "system",
-    details: entry.details ?? {},
+    details: (entry.details ?? {}) as Json,
   });
 }
 
@@ -187,7 +188,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
   const verification = await paystackVerify(reference);
   if (verification.status !== "success") {
     await supabaseAdmin.from("result_pin_payments").update({
-      status: "failed", raw_response: verification as unknown as Record<string, unknown>,
+      status: "failed", raw_response: verification as unknown as Json,
     }).eq("id", payment.id);
     await auditLog({ action: "payment_failed", entity_type: "result_pin_payment", entity_id: payment.id, details: { reference } });
     throw new Error("Payment was not successful.");
@@ -201,7 +202,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
     await supabaseAdmin.from("result_pin_payments").update({
       status: "successful", verified_at: new Date().toISOString(),
       paystack_reference: verification.reference,
-      raw_response: verification as unknown as Record<string, unknown>,
+      raw_response: verification as unknown as Json,
     }).eq("id", payment.id);
     await auditLog({ action: "payment_successful", entity_type: "result_pin_payment", entity_id: payment.id, details: { reference } });
   }
@@ -493,7 +494,7 @@ async function requireAdmin(userId: string) {
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
-    .in("role", ["super_admin", "faculty_admin", "dept_admin"])
+    .in("role", ["super_admin", "faculty_admin", "department_admin"])
     .maybeSingle();
   if (!role) throw new Error("Forbidden: admin access required.");
 }
