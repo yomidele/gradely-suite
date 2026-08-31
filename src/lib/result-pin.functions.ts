@@ -27,6 +27,12 @@ async function getCollegeSettings(): Promise<CollegeSettings> {
   return { ...(data as unknown as CollegeSettings), pin_settings: pin };
 }
 
+function getResultPinPepper(): string {
+  const pepper = process.env.RESULT_PIN_HASH_PEPPER;
+  if (!pepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
+  return pepper;
+}
+
 async function auditLog(entry: {
   action: string;
   entity_type: string;
@@ -227,7 +233,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
       session_id: payment.session_id,
       semester: payment.semester,
       payment_id: payment.id,
-      pin_hash: hashPin(rawPin),
+       pin_hash: hashPin(rawPin, getResultPinPepper()),
       pin_last4: rawPin.slice(-4),
       source: "online",
       status: "active",
@@ -284,7 +290,7 @@ export async function verifyAndFulfilPinPayment(reference: string) {
 export const verifyPinPurchase = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ reference: z.string().min(6) }).parse(input))
   .handler(async ({ data }) => {
-    const result = await verifyAndFulfilPinPayment(data.reference);
+    const result = await verifyAndFulfilPinPayment(data.reference, getResultPinPepper());
     let voucherUrl = "voucherUrl" in result ? result.voucherUrl : null;
     if (!voucherUrl && result.pin.voucher_path) {
       const { data: signed } = await supabaseAdmin.storage.from(VOUCHER_BUCKET).createSignedUrl(result.pin.voucher_path, 60 * 60);
@@ -347,7 +353,7 @@ export const checkResult = createServerFn({ method: "POST" })
       .eq("session_id", data.session_id)
       .eq("semester", data.semester);
 
-    const match = (candidates ?? []).find((p) => verifyPinAgainstHash(data.pin, p.pin_hash));
+    const match = (candidates ?? []).find((p) => verifyPinAgainstHash(data.pin, p.pin_hash, getResultPinPepper()));
     if (!match) return fail("pin_mismatch");
 
     if (match.status === "disabled") throw new Error("This PIN has been disabled. Please contact the registry.");
@@ -584,7 +590,7 @@ export const adminGenerateManualPin = createServerFn({ method: "POST" })
       .from("result_pins")
       .insert({
         student_id: student.id, session_id: data.session_id, semester: data.semester,
-        pin_hash: hashPin(rawPin), pin_last4: rawPin.slice(-4), source: "manual", issued_by: context.userId,
+       pin_hash: hashPin(rawPin, getResultPinPepper()), pin_last4: rawPin.slice(-4), source: "manual", issued_by: context.userId,
         status: "active", max_views: settings.pin_settings.max_views, views_used: 0,
         expires_at: expiresAt.toISOString(), activated_at: new Date().toISOString(),
       })
