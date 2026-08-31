@@ -12,6 +12,7 @@ import { useRole } from "@/hooks/use-role";
 import { CollegeSettings, useCollegeSettings } from "@/lib/college-settings";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { Json } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/admin/settings")({
   head: () => ({ meta: [{ title: "Settings — Super Admin" }] }),
@@ -55,10 +56,10 @@ function SettingsPage() {
       const values = {
         college_name: form.college_name.trim(), short_name: form.short_name.trim(), motto: form.motto,
         logo_url: form.logo_url, address: form.address, city: form.city, state: form.state,
-        phone: form.phone, email: form.email, website: form.website, socials: parsedSocials,
+        phone: form.phone, email: form.email, website: form.website, socials: parsedSocials as unknown as Json,
         matric_format: form.matric_format.trim(), matric_seq_padding: form.matric_seq_padding,
-        grading_scale: parsedScale, pass_mark: form.pass_mark, use_gpa: form.use_gpa,
-        pin_settings: form.pin_settings, payment_settings: form.payment_settings,
+        grading_scale: parsedScale as unknown as Json, pass_mark: form.pass_mark, use_gpa: form.use_gpa,
+        pin_settings: form.pin_settings as unknown as Json, payment_settings: form.payment_settings as unknown as Json,
       };
       const response = form.id
         ? await supabase.from("college_settings").update(values).eq("id", form.id)
