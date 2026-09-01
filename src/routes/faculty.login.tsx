@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession } from "@/hooks/use-auth";
+import { useRole } from "@/hooks/use-role";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -17,14 +18,15 @@ export const Route = createFileRoute("/faculty/login")({
 
 function FacultyLoginPage() {
   const navigate = useNavigate();
-  const { session } = useAuthSession();
+  const { session, loading: authLoading } = useAuthSession();
+  const { isFacultyAdmin, isSuperAdmin, loading: roleLoading } = useRole();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (session) navigate({ to: "/faculty/dashboard" });
-  }, [session, navigate]);
+    if (!authLoading && !roleLoading && session && (isFacultyAdmin || isSuperAdmin)) navigate({ to: "/faculty/dashboard" });
+  }, [authLoading, roleLoading, session, isFacultyAdmin, isSuperAdmin, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();

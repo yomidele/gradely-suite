@@ -20,7 +20,7 @@ export const Route = createFileRoute("/student/login")({
 
 function StudentLoginPage() {
   const navigate = useNavigate();
-  const { session } = useAuthSession();
+  const { session, loading: authLoading } = useAuthSession();
   const { isStudent, loading: roleLoading } = useRole();
   const [matric, setMatric] = useState("");
   const [password, setPassword] = useState("");
@@ -28,9 +28,9 @@ function StudentLoginPage() {
   const resolve = useServerFn(resolveMatricToEmail);
 
   useEffect(() => {
-    if (!session || roleLoading) return;
+    if (authLoading || roleLoading || !session) return;
     if (isStudent) navigate({ to: "/student/dashboard" });
-  }, [session, roleLoading, isStudent, navigate]);
+  }, [authLoading, session, roleLoading, isStudent, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
