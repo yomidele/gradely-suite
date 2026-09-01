@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { ensureDemoAdmin } from "@/lib/seed-admin.functions";
 import { useAuthSession } from "@/hooks/use-auth";
+import { useRole } from "@/hooks/use-role";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -21,14 +22,15 @@ const DEMO_PASSWORD = "demo1234";
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { session } = useAuthSession();
+  const { session, loading: authLoading } = useAuthSession();
+  const { isSuperAdmin, loading: roleLoading } = useRole();
   const [email, setEmail] = useState(DEMO_EMAIL);
   const [password, setPassword] = useState(DEMO_PASSWORD);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (session) navigate({ to: "/dashboard" });
-  }, [session, navigate]);
+    if (!authLoading && !roleLoading && session && isSuperAdmin) navigate({ to: "/dashboard" });
+  }, [authLoading, roleLoading, session, isSuperAdmin, navigate]);
 
   // Ensure demo admin exists on page load
   useEffect(() => {

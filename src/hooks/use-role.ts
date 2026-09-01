@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession } from "./use-auth";
 import type { Database } from "@/integrations/supabase/types";
@@ -7,8 +7,6 @@ export type AppRole = Database["public"]["Enums"] extends { app_role: infer R } 
 
 export function useRole() {
   const { session, loading: sessionLoading } = useAuthSession();
-  const [roles, setRoles] = useState<AppRole[]>([]);
-  const [loading, setLoading] = useState(true);
   // Was keyed off the whole `session` object before — Supabase silently
   // refreshes the access token on a timer, which produces a brand-new
   // session object for the SAME user. That made this effect re-run and
@@ -21,39 +19,29 @@ export function useRole() {
   // token refresh.
   const userId = session?.user?.id ?? null;
 
-  useEffect(() => {
-    if (sessionLoading) return;
-    if (!userId) {
-      setRoles([]);
-      setLoading(false);
-      return;
-    }
-    let cancelled = false;
-    (async () => {
+  const query = useQuery({
+    queryKey: ["user-roles", userId],
+    enabled: Boolean(userId) && !sessionLoading,
+    staleTime: 5 * 60_000,
+    retry: 1,
+    queryFn: async () => {
+      if (!userId) return [] as AppRole[];
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", userId);
-      if (cancelled) return;
-      // Don't overwrite already-known-good roles with an empty array on a
-      // failed/errored fetch — that's exactly the kind of transient blip
-      // that produced the flicker. Only commit a result we're confident in.
-      if (error) {
-        console.error("Failed to load user roles:", error.message);
-        setLoading(false);
-        return;
-      }
-      setRoles((data ?? []).map((r) => r.role as AppRole));
-      setLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [userId, sessionLoading]);
+      if (error) throw error;
+      return (data ?? []).map((r) => r.role as AppRole);
+    },
+  });
+
+  // Successful role data stays available while React Query refreshes it.
+  const roles = query.data ?? [];
+  const loading = sessionLoading || (Boolean(userId) && query.isPending);
 
   return {
     roles,
-    loading: sessionLoading || loading,
+    loading,
     isSuperAdmin: roles.includes("super_admin" as AppRole),
     isFacultyAdmin: roles.includes("faculty_admin" as AppRole),
     isStudent: roles.includes("student" as AppRole),

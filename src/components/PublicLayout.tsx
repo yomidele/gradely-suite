@@ -2,7 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { HeartPulse, Menu, X, Phone, Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCollegeSettings, formatAddress } from "@/lib/college-settings";
+import { useAuthSession } from "@/hooks/use-auth";
+import { useRole } from "@/hooks/use-role";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -18,8 +23,38 @@ const NAV = [
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   const { settings } = useCollegeSettings();
+  const { session } = useAuthSession();
+  const { roles } = useRole();
   const [open, setOpen] = useState(false);
   const address = formatAddress(settings);
+  const userId = session?.user.id;
+  const isStudent = roles.includes("student");
+  const { data: student } = useQuery({
+    queryKey: ["public-account-student", userId],
+    enabled: Boolean(userId) && isStudent,
+    staleTime: 5 * 60_000,
+    queryFn: async () => {
+      if (!userId) return null;
+      const { data } = await supabase
+        .from("students")
+        .select("full_name, passport_url")
+        .eq("user_id", userId)
+        .maybeSingle();
+      return data;
+    },
+  });
+  const metadata = session?.user.user_metadata as Record<string, unknown> | undefined;
+  const accountName = student?.full_name ?? (metadata?.["full_name"] as string | undefined) ?? (metadata?.["display_name"] as string | undefined) ?? session?.user.email?.split("@")[0] ?? "Account";
+  const accountImage = student?.passport_url ?? (metadata?.["avatar_url"] as string | undefined) ?? (metadata?.["picture"] as string | undefined);
+  const accountTarget = isStudent
+    ? "/student/profile"
+    : roles.includes("super_admin")
+      ? "/dashboard"
+      : roles.includes("faculty_admin")
+        ? "/faculty/dashboard"
+        : roles.includes("department_admin")
+          ? "/dept-admin/dashboard"
+          : "/lecturer/dashboard";
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -83,6 +118,19 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
             <Button asChild size="sm" variant="outline">
               <Link to="/student/login">Student Portal</Link>
             </Button>
+            {session && (
+              <Link
+                to={accountTarget}
+                aria-label={`Open ${accountName} account`}
+                className="flex min-w-0 items-center gap-2 rounded-md p-1.5 text-foreground transition-colors hover:bg-secondary"
+              >
+                <Avatar className="h-8 w-8 border border-border">
+                  <AvatarImage src={accountImage ?? undefined} alt={`${accountName} profile`} />
+                  <AvatarFallback>{accountName.slice(0, 1).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span className="hidden max-w-28 truncate text-xs font-medium xl:inline">{accountName}</span>
+              </Link>
+            )}
             <button
               type="button"
               aria-label="Toggle menu"
