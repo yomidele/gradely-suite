@@ -28,6 +28,15 @@ function LoginPage() {
   const [password, setPassword] = useState(DEMO_PASSWORD);
   const [submitting, setSubmitting] = useState(false);
 
+  // This is the ONLY place that navigates to /dashboard. It waits for auth
+  // AND role to both finish loading and confirm isSuperAdmin before moving —
+  // that's what actually proves the login succeeded, not just the password
+  // check. handleSignIn below used to also navigate immediately on its own,
+  // which raced against this and usually lost: it would jump to /dashboard
+  // before the role was confirmed, ProtectedAdmin would see "not confirmed
+  // yet," and bounce straight back to /login. Looked like signing in just
+  // didn't do anything. Removed the duplicate navigate from handleSignIn so
+  // this effect is the single source of truth for the redirect.
   useEffect(() => {
     if (!authLoading && !roleLoading && session && isSuperAdmin) navigate({ to: "/dashboard" });
   }, [authLoading, roleLoading, session, isSuperAdmin, navigate]);
@@ -49,7 +58,8 @@ function LoginPage() {
         return;
       }
       toast.success("Welcome back, Admin");
-      navigate({ to: "/dashboard" });
+      // No navigate() here on purpose — the useEffect above handles the
+      // redirect once session + role are both actually confirmed.
     } finally {
       setSubmitting(false);
     }
