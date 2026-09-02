@@ -33,7 +33,7 @@ function CallbackPage() {
       return;
     }
     verify({ data: { reference: ref } })
-      .then((result) => setOutcome({ state: "success", voucherUrl: result.voucherUrl, alreadyProcessed: result.alreadyProcessed }))
+       .then((result) => setOutcome({ state: "success", voucherUrl: result.voucherUrl ?? null, alreadyProcessed: result.alreadyProcessed }))
       .catch((error) => setOutcome({ state: "error", message: (error as Error).message }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref]);

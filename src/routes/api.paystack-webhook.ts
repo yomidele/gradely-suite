@@ -27,7 +27,9 @@ export const Route = createFileRoute("/api/paystack-webhook")({
 
         if (event.event === "charge.success" && event.data?.reference) {
           try {
-            await verifyAndFulfilPinPayment(event.data.reference);
+            const pepper = process.env.RESULT_PIN_HASH_PEPPER;
+            if (!pepper) throw new Error("Server misconfiguration: RESULT_PIN_HASH_PEPPER is not set.");
+            await verifyAndFulfilPinPayment(event.data.reference, pepper);
           } catch (error) {
             // Log and still 200 — Paystack retries on non-2xx, and retrying a
             // failed verification (e.g. student record deleted) won't help.
