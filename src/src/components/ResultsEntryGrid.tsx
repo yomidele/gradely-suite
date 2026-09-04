@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -187,6 +187,70 @@ export function ResultsEntryGrid() {
           entry.student_id === studentId ? { ...entry, [field]: value } : entry
         )
       );
+    },
+    []
+  );
+
+  // ── Fast entry: keyboard nav + paste-from-spreadsheet ────────────────────
+  // The old experience required clicking into every single box for every
+  // student — slow for a class of 60+. Two additions fix that:
+  //  1. Enter moves down to the same column on the next row (Tab already
+  //     moves right natively, since CA/Exam are adjacent inputs in the DOM —
+  //     no change needed there).
+  //  2. Pasting a copied column (or two tab-separated columns) from Excel/
+  //     Sheets into any CA or Exam box fills that column downward starting
+  //     from the pasted cell, instead of only ever accepting one typed value
+  //     at a time.
+  const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const cellKey = (rowIndex: number, field: "ca_score" | "exam_score") => `${rowIndex}-${field}`;
+
+  const focusCell = useCallback((rowIndex: number, field: "ca_score" | "exam_score") => {
+    inputRefs.current[cellKey(rowIndex, field)]?.focus();
+  }, []);
+
+  const handleCellKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>, rowIndex: number, field: "ca_score" | "exam_score") => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        focusCell(rowIndex + 1, field);
+      }
+    },
+    [focusCell]
+  );
+
+  const handleCellPaste = useCallback(
+    (e: React.ClipboardEvent<HTMLInputElement>, rowIndex: number, field: "ca_score" | "exam_score") => {
+      const text = e.clipboardData.getData("text");
+      // A single value with no line breaks or tabs: let the browser's normal
+      // paste behavior handle it (just fills the one box, as expected).
+      if (!text.includes("\n") && !text.includes("\t")) return;
+      e.preventDefault();
+
+      const rows = text
+        .replace(/\r/g, "")
+        .split("\n")
+        .filter((line) => line.length > 0)
+        .map((line) => line.split("\t"));
+
+      setGridEntries((prev) => {
+        const next = [...prev];
+        rows.forEach((cols, offset) => {
+          const target = rowIndex + offset;
+          if (target >= next.length) return;
+          const entry = { ...next[target] };
+          if (field === "ca_score") {
+            if (cols[0] !== undefined && cols[0].trim() !== "") entry.ca_score = cols[0].trim();
+            // Two-column paste (CA then Exam) starting from a CA cell fills both.
+            if (cols[1] !== undefined && cols[1].trim() !== "") entry.exam_score = cols[1].trim();
+          } else {
+            if (cols[0] !== undefined && cols[0].trim() !== "") entry.exam_score = cols[0].trim();
+          }
+          next[target] = entry;
+        });
+        return next;
+      });
+
+      toast.success(`Pasted ${rows.length} row${rows.length !== 1 ? "s" : ""}`);
     },
     []
   );
@@ -441,6 +505,9 @@ export function ResultsEntryGrid() {
             <CardTitle className="text-base">Enter Scores</CardTitle>
             <p className="text-xs text-muted-foreground mt-2">
               Enter CA (0-40) and Exam (0-70) scores. Leave blank to skip a student.
+              Press <kbd className="rounded border bg-muted px-1 py-0.5 font-mono">Enter</kbd> to jump to the next
+              student's box, or copy a column of scores from Excel and paste it straight into any box to fill the
+              whole column down — copy two columns (CA then Exam) to fill both at once.
             </p>
           </CardHeader>
           <CardContent className="p-0">
@@ -457,7 +524,7 @@ export function ResultsEntryGrid() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {gridEntries.map((entry) => {
+                  {gridEntries.map((entry, rowIndex) => {
                     const ca = entry.ca_score ? Number(entry.ca_score) : 0;
                     const exam = entry.exam_score ? Number(entry.exam_score) : 0;
                     const total = entry.ca_score && entry.exam_score ? Math.min(ca + exam, 100) : null;
@@ -474,24 +541,30 @@ export function ResultsEntryGrid() {
                         <TableCell className="text-sm py-3">{entry.full_name}</TableCell>
                         <TableCell className="text-center py-3">
                           <Input
+                            ref={(el) => { inputRefs.current[cellKey(rowIndex, "ca_score")] = el; }}
                             type="number"
                             min="0"
                             max="40"
                             step="0.5"
                             value={entry.ca_score}
                             onChange={(e) => handleScoreChange(entry.student_id, "ca_score", e.target.value)}
+                            onKeyDown={(e) => handleCellKeyDown(e, rowIndex, "ca_score")}
+                            onPaste={(e) => handleCellPaste(e, rowIndex, "ca_score")}
                             placeholder="—"
                             className={`h-8 text-center text-xs ${entryErrors ? "border-destructive" : ""}`}
                           />
                         </TableCell>
                         <TableCell className="text-center py-3">
                           <Input
+                            ref={(el) => { inputRefs.current[cellKey(rowIndex, "exam_score")] = el; }}
                             type="number"
                             min="0"
                             max="70"
                             step="0.5"
                             value={entry.exam_score}
                             onChange={(e) => handleScoreChange(entry.student_id, "exam_score", e.target.value)}
+                            onKeyDown={(e) => handleCellKeyDown(e, rowIndex, "exam_score")}
+                            onPaste={(e) => handleCellPaste(e, rowIndex, "exam_score")}
                             placeholder="—"
                             className={`h-8 text-center text-xs ${entryErrors ? "border-destructive" : ""}`}
                           />
